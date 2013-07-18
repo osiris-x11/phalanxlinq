@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>HIT: {% block title %}Home{% endblock %}</title>
+
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <script src="{{ STATIC_URL }}lib/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/knockout-2.2.1.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/knockout.mapping-2.4.1.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/cosmo/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap-responsive.min.css">
+    <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="navbar-dnb navbar navbar-invexrse navbar-static-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+          <form class="navbar-search pull-right">
+            <input type="text" name="q" class="search-query" placeholder="Search">
+          </form>
+
+          <a class="brand" href="{% url home %}">
+            Core
+          </a>
+          <div class="nav-collapse collapse">
+            <ul class="nav" id="primaryNav">
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-txop:50px">
+      {% block subnav %}{% endblock %}
+      {% block content %}{% endblock %}
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">
+          Project Home: <a href="https://github.com/osiris-x11/hit-azure">https://github.com/osiris-x11/hit-azure</a>.
+          &copy; Umar Siddiqui Inc. {% now "Y" %} All rights reserved.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

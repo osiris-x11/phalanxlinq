@@ -1,0 +1,41 @@
+{% extends "web/includes/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
+<script type="text/javascript">
+    function ARViewModel()
+    {
+        var self = this;
+
+        self.accounts = ko.observableArray([
+            ])
+
+        self.addAccount = function() {
+            self.accounts.push({});
+        };
+     
+        self.removeAccount = function() {
+            self.accounts.remove(this);
+        };
+
+        self.duns = ko.observable('123');
+    }
+
+
+    $(function(){
+	    var vm = new ARViewModel();
+        ko.applyBindings(vm);
+    });
+</script>
+
+<input type="text" data-bind="value: duns, dnb-type-ahead: 1" style="width:300px" />
+<br />
+D-U-N-S Number: <span data-bind="text: duns"></span>
+
+<span data-bind="text: duns"></span>
+
+
+{% endblock %}
