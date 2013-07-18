@@ -20,5 +20,6 @@ def search(request):
 
     c = { 'rows' : [r for r in rows] }
     c['rows_json'] = json.dumps(c['rows'])
+    c['sics_json'] = json.dumps([r for r in _db().sic.find({}, {'_id':0})])
 
     return render(request, 'web/search.html', c)

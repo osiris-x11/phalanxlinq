@@ -7,13 +7,20 @@
 
 <script type="text/javascript">
 $(function(){
-    var vm = { items : {{rows_json|safe}} };
+    var vm = {
+        items : {{rows_json|safe}},
+        sics : {{sics_json|safe}}
+    };
     ko.applyBindings(vm);
 });
 </script>
 
 <h3>Search Results</h3>
 Results: <!--ko text:items.length--><!--/ko-->
+
+<select data-bind="foreach: sics" multiple>
+    <option data-bind="text: name"></option>
+</select>
 
 <table class="table table-striped">
     <thead>
