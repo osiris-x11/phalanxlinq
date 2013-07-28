@@ -8,19 +8,80 @@
 <script type="text/javascript">
 $(function(){
     var vm = {
-        items : {{rows_json|safe}},
-        sics : {{sics_json|safe}}
     };
-    ko.applyBindings(vm);
+//    console.log(JSON.stringify(vm.sics));
+//    ko.applyBindings(vm);
 });
+</script>
+
+<form class="navbar-search" action="{% url search %}">
+    <input class="form-control" type="text" name="q" class="search-query" placeholder="Search" value="{{q}}">
+
+    Only Show:
+    <label>
+    <input type="checkbox" name="opts" value="minority" {% if 'minority' in opts %}checked{%endif%}> Minority</label>
+
+    <label>
+    <input type="checkbox" name="opts" value="woman" {% if 'woman' in opts %}checked{%endif%}> Woman</label>
+
+    <label>
+    <input type="checkbox" name="opts" value="veteran" {% if 'veteran' in opts %}checked{%endif%}> Veteran</label>
+
+    <br />
+    Dataset:
+    <label>
+    <input type="checkbox" name="opts" value="full" {% if 'full' in opts %}checked{%endif%}> Full DataSet</label>
+
+
+    <input class="btn btn-primary" type="submit" value="Search" />
+</form>
+
+<div id="map" style="height:400px;display:none"></div>
+
+<script type="text/javascript">
+var mapIt = function()
+{
+    $('#map').show();
+    var map = L.map('map').setView([30.2669, -97.7428], 13);
+    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+            }).addTo(map);
+
+
+    (function(){
+        var coords;
+        var markers = L.markerClusterGroup();
+    {% for row in rows %}
+        coords = ['{{row.Location.Latitude}}', '{{row.Location.Longitude}}'];
+        if (coords[0] !== '' && coords[1] !== '')
+        {
+            coords = [Number(coords[0]), Number(coords[1])];
+            if (isNaN(coords[0]) || isNaN(coords[1]))
+                ;
+            else {
+                var marker = L.marker(new L.LatLng(coords[0], coords[1]), { title: '{{row.Name}}' });
+                marker.bindPopup('{{row.Name}}');
+                markers.addLayer(marker);
+            }
+//            L.marker(coords).addTo(map)
+//                .bindPopup("<b>{{row.Name}}</b><br />").openPopup();
+
+        }
+    {% endfor %}
+        map.addLayer(markers);
+        map.fitBounds(markers.getBounds());
+
+    })();
+}
+
+{% if rows %}
+mapIt()
+{%endif%}
 </script>
 
 <h3>Search Results</h3>
 Results: <!--ko text:items.length--><!--/ko-->
-
-<select data-bind="foreach: sics" multiple>
-    <option data-bind="text: name"></option>
-</select>
 
 <table class="table table-striped">
     <thead>
@@ -29,22 +90,43 @@ Results: <!--ko text:items.length--><!--/ko-->
             <th>Company</th>
             <th>Location</th>
             <th>Size</th>
-            <th>Financial Performance Score</th>
-            <th>Supplier Performance Score</th>
         </tr>
     </thead>
-    <tbody data-bind="foreach: items">
+    <tbody>
+        {% for row in rows %}
         <tr>
-            <td data-bind="text: DUNSNumber"></td>
-            <td data-bind="text: Company"></td>
-            <td><!--ko text: Address--><!--/ko--><br /><!--ko text: City + ', ' + StateAbbrv + ' ' + ZipCode--><!--/ko--><br /><!--ko text: Country--><!--/ko--></td>
             <td>
-                <!--ko text: EmployeesTotal--><!--/ko-->
-                <!--ko text: EmployeesTotalHere--><!--/ko-->
-                $<!--ko text: AnnualSalesUSDollars--><!--/ko-->
+                {{row.DUNS}}
+            </td>
+            <td>
+                <a href="{% url company row.DUNS %}">{{row.Name}}</a>
+            </td>
+            <td>
+                {{row.Location.Street1}}<br/>
+                {{row.Location.City}}, {{row.Location.State}} {{row.Location.PostalCode}}<br />
+                {{row.Location.Country}}
+            </td>
+            <td>
+                {{ row.EmployeesTotal }}
+                {{ row.EmployeesHere }}
+                {{ row.AnnualSalesUSD }}
+
+                --
+            </td>
+            <td>
+                {{row.Addl.MinorityIndicator}}
+                {{row.Addl.VeteranOwnedIndicator}}
+                {{row.Addl.WomanOwnedBusinessEnterpriseIndicator}}
             </td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
+
+<!--
+<select data-bind="foreach: sics" multiple>
+    <option data-bind="text: name"></option>
+</select>
+-->
 
 {% endblock %}

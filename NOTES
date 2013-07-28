@@ -1,0 +1,17 @@
+sudo mongod --setParameter textSearchEnabled=true
+
+
+
+db.Firmographics.ensureIndex({ "$**" : "text" }, { "weights" : { "Company" : 10, "DoingBusinessAs1" : 7 }, "name" : "TextIndex" })
+
+db.companies.ensureIndex({ "$**" : "text" }, { "weights" : { "Name" : 10, "DBAs" : 7, "Industry.LineOfBusiness" : 3 }, "name" : "TextIndex" })
+
+
+
+
+db.command("text", "Firmographics", search="orange", project={"Company": 1, "_id": 0}, limit=10)
+
+db.command("text", "Firmographics", search="orange", project={"_id": 0}, limit=10)
+
+
+db.command("text", "Firmographics", search="orange", limit=10)

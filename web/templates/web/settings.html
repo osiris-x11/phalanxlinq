@@ -1,0 +1,70 @@
+{% extends "web/includes/base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+
+
+<script type="text/javascript">
+$(function(){
+    var vm = {
+        items : {{rows_json|safe}},
+        sics : {{sics_json|safe}}
+    };
+    console.log(JSON.stringify(vm.sics));
+    ko.applyBindings(vm);
+});
+</script>
+
+<h3>SIC Filter</h3>
+
+<form method="POST">{% csrf_token %}
+    <input type="submit" class="btn btn-primary" />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>DUNS</th>
+            <th>SIC</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for sic in sics %}
+        <tr data-sic>
+            <td>
+                <input type="checkbox" name="sic" value="{{sic.code}}" {% if sic.code in settings.SICs %}checked{%endif%} />
+            </td>
+            <td>
+                {{sic.code}}
+            </td>
+            <td>
+                {% if sic.level == 1 %}
+                {% endif %}
+
+                {% if sic.level == 2 %}
+                     &nbsp; &nbsp;
+                {% endif %}
+                
+                {% if sic.level == 3 %}
+                     &nbsp;  &nbsp; &nbsp;  &nbsp;
+                {% endif %}
+                
+                {% if sic.level == 4 %}
+                     &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;  &nbsp;
+                {% endif %}
+
+                {{sic.name}}
+            </td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+</form>
+
+<!--
+<select data-bind="foreach: sics" multiple>
+    <option data-bind="text: name"></option>
+</select>
+-->
+
+{% endblock %}

@@ -1,0 +1,21 @@
+<div class="panel">
+  <div class="panel-heading">
+    {% if co.Location.Phone %}
+    <a class="pull-right" href="tel:{{co.Location.Phone}}"><span class="glyphicon glyphicon-phone"></span> {{co.Location.Phone}}</a>
+    {% endif %}
+    <a href="{% url company co.DUNS %}">{{co.Name}}</a>
+    {% if co.DBAs %}
+        DBA: {{ co.DBAs|join:", "}}
+    {% endif %}
+  </div>
+    {{co.Location.Street1}}<br />
+    {{co.Location.City}}, {{co.Location.State}} {{co.Location.PostalCode}}<br />
+    {{co.Location.Country}}
+
+    {% if co.Location.AccuracyCode %}
+    {{co.Location.Latitude}}
+    {{co.Location.Longitude}}
+    {{co.Location.AccuracyCode}}
+    {% endif %}
+</div>
+

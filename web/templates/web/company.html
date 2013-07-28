@@ -1,0 +1,215 @@
+{% extends "web/includes/base.html" %}
+
+{% load humanize %}
+{% block title %}Company Detail{% endblock %}
+
+{% block content %}
+
+
+<script type="text/javascript">
+$(function(){
+    var vm = {{co_json|safe}};
+
+//    ko.applyBindings(vm);
+});
+</script>
+
+<div class="navbar">
+  <a class="navbar-brand" href="#">{{co.Name}}</a>
+  <p class="navbar-text">
+  	{{ co.CEO.Title }} : {{ co.CEO.Name }}<br />
+  	Employees: {{ co.EmployeesHere }} of {{ co.EmployeesTotal }}<br />
+  	Sales: ${{ co.AnnualSalesUSD|intcomma }}<br />
+  	Founded: {% if co.StartYear %}{{ co.StartYear }}{%else%}{{co.ControlYear }}{% endif %}
+  </p>
+</div>
+
+
+<div id="map" style="height:300px"></div>
+
+<script type="text/javascript">
+if ('{{co.Location.Latitude}}' !== '')
+{
+
+	var map = L.map('map').setView([{{co.Location.Latitude}}, {{co.Location.Longitude}}], 13);
+	L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+			}).addTo(map);
+
+
+			L.marker([{{co.Location.Latitude}}, {{co.Location.Longitude}}]).addTo(map)
+				.bindPopup("<b>{{co.Name}}</b><br />").openPopup();
+
+}
+</script>
+
+
+
+
+Out of business: {{co.Addl.OutOfBusinessInd}}
+Single location: {{co.Addl.SingleLocation}} 
+Small business: {{co.Addl.SmallBusinessIndicator}}
+
+Industry: {{co.Industry.LineOfBusiness }}
+
+BankruptcyDate : {{co.Addl.BankruptcyDate}} {{co.Addl.Bankruptcyindicator}}
+
+<div class="panel">
+	Minority Owned
+{% if co.Addl.MinorityIndicator == 'Y' %}
+	{{co.Addl.Minority1DateReceivedbyDnB}}
+	Code: {{co.Addl.MinorityCertificationCode1 }}
+	Date: {{co.Addl.MinorityCertificationDate1 }}
+	Date: {{co.Addl.MinorityCertificationExpirationDate1 }}
+	{{co.Addl.MinorityCertificationNumber1}}
+	Date: {{co.Addl.MinorityClassificationCode1 }}
+	Date: {{co.Addl.MinoritySourceCodeName1 }}
+	Date: {{co.Addl.MinoritySourceLevelCode1 }}
+
+	{% if co.Addl.Minority2DateReceivedbyDnB %}
+
+	{{co.Addl.Minority2DateReceivedbyDnB}}
+	Code: {{co.Addl.MinorityCertificationCode2 }}
+	Date: {{co.Addl.MinorityCertificationDate2 }}
+	Date: {{co.Addl.MinorityCertificationExpirationDate2 }}
+	{{co.Addl.MinorityCertificationNumber2}}
+	Date: {{co.Addl.MinorityClassificationCode2 }}
+	Date: {{co.Addl.MinoritySourceCodeName2 }}
+	Date: {{co.Addl.MinoritySourceLevelCode2 }}
+
+	{% endif %}
+{% endif %}
+</div>
+
+<table class="table table-striped">
+	<tr>
+		<td>M</td>
+
+
+	</tr>
+
+</table>
+
+<div class="row">
+	<div class="col-lg-4">
+		{% include 'web/includes/co_info_box.html' with co=co DBAs=co.DBAs %}
+	</div>
+	{% if co.Linkage.Parent %}
+	<div class="col-lg-4">
+		parent:
+		{% include 'web/includes/co_info_box.html' with co=co.Linkage.Parent %}
+	</div>
+	{% endif %}
+	{% if co.Linkage.HQ %}
+	<div class="col-lg-4">
+		HQ
+		{% include 'web/includes/co_info_box.html' with co=co.Linkage.HQ %}
+	</div>
+	{% endif %}
+
+	{% if co.Linkage.DomesticUltimate.DUNS and co.Linkage.DomesticUltimate.DUNS != co.Linkage.Parent.DUNS and co.Linkage.DomesticUltimate.DUNS != co.DUNS %}
+	<div class="col-lg-4">
+		Domestic
+		{% include 'web/includes/co_info_box.html' with co=co.Linkage.DomesticUltimate %}
+	</div>
+	{% endif %}
+
+	{% if co.Linkage.GlobalUltimate.DUNS != co.Linkage.DomesticUltimate.DUNS %}
+	<div class="col-lg-4">
+		Global Ultimate
+		{% include 'web/includes/co_info_box.html' with co=co.Linkage.GlobalUltimate %}
+	</div>
+	{% endif %}
+</div>
+
+<h5>Debug Info</h5>
+
+<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
+
+
+
+
+Annual Sales: <span data-bind="text: AnnualSalesUSDollars"></span>
+<span class="glyphicon glyphicon-ok"></span>
+<hr/>
+
+<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
+
+
+
+<!--ko if: DoingBusinessAs1 -->
+DBA <span data-bind="text: DoingBusinessAs1"></span>
+<!--/ko-->
+
+<!--ko if: DoingBusinessAs2 -->
+, <span data-bind="text: DoingBusinessAs2"></span>
+<!--/ko-->
+<!--ko if: DoingBusinessAs3 -->
+, <span data-bind="text: DoingBusinessAs3"></span>
+<!--/ko-->
+
+<!--ko if: DoingBusinessAs3 -->
+, <span data-bind="text: DoingBusinessAs4"></span>
+<!--/ko-->
+<!--ko if: DoingBusinessAs3 -->
+, <span data-bind="text: DoingBusinessAs5"></span>
+<!--/ko-->
+<br />
+Single Location: <span data-bind="text: SingleLocation"></span>
+
+<br />
+
+
+Tree:
+<br/>
+
+<div class="panel">
+  <div class="panel-heading">Panel heading</div>
+  Panel content
+</div>
+
+<div class="row">
+	<div class="span4">
+<span class="badge text-center" data-bind="text:GlobalUltimateOrganizationName"></span></br>
+<div style="background-color:#999;width:50px">.</div>
+<span class="badge" data-bind="text:DomesticUltimateOrganizationName"></span></br>
+<span class="badge" data-bind="text:ParentOrganizationName"></span></br>
+<span class="badge" data-bind="text:Company"></span></br>
+</div>
+</div>
+
+
+<!--ko if: ParentDUNS != DUNSNumber && ParentDUNS != '000000000' -->
+<h3>Parent</h3>
+
+ParentOrganizationAddress": "",
+  "ParentOrganizationAddress2": "",
+  "ParentOrganizationCity": "",
+  "ParentOrganizationCountry": "",
+  "ParentOrganizationName": "",
+  "ParentOrganizationPostalCode": "",
+  "ParentOrganizationStateAbbrv
+<!--/ko-->
+
+DomesticUltimateDUNS,
+HQOrganizationAddress,
+
+GlobalUltimateDUNS
+
+
+
+<!--ko if: DomesticUltimateDUNS != DUNSNumber-->
+
+<!--/ko-->
+CompanyStartYear
+CongressDistrict
+ControlYear
+DUNSNumber
+Debarrment
+": "DAYLIGHT DONUTS",
+  "DoingBusinessAs2": "REX BONELESS FRIED CHICKEN",
+  "DoingBusinessAs3
+
+
+{% endblock %}

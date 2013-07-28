@@ -3,34 +3,59 @@
 <head>
     <meta charset="utf-8">
     <title>HIT: {% block title %}Home{% endblock %}</title>
-
-
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="{{ STATIC_URL }}lib/bootstrap-glyphicons/css/bootstrap-glyphicons.css" rel="stylesheet" media="screen">
+    <!--
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/cosmo/bootstrap.min.css">
+  -->
+
+
+
+
 
     <script src="{{ STATIC_URL }}lib/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/knockout-2.2.1.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/knockout.mapping-2.4.1.js"></script>
-    <link rel="stylesheet" href="{{ STATIC_URL }}lib/cosmo/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap-responsive.min.css">
     <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap.min.js"></script>
+
+
+
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+ <![endif]-->
+  <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+
+<link rel="stylesheet" href="{{ STATIC_URL }}lib/leaflet.markercluster/MarkerCluster.css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}lib/leaflet.markercluster/MarkerCluster.Default.css" />
+  <!--[if lte IE 8]><link rel="stylesheet" href="{{ STATIC_URL }}lib/leaflet.markercluster/MarkerCluster.Default.ie.css" /><![endif]-->
+  <script src="{{ STATIC_URL }}lib/leaflet.markercluster/leaflet.markercluster-src.js"></script>
+
+
+
   </head>
   <body>
     <div class="navbar-dnb navbar navbar-invexrse navbar-static-top">
       <div class="navbar-inner">
         <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
 
-          <form class="navbar-search pull-right">
+          <form class="navbar-search pull-right" action="{% url search %}">
             <input type="text" name="q" class="search-query" placeholder="Search">
           </form>
 
-          <a class="brand" href="{% url home %}">
+          <a class="navbar-brand" href="{% url home %}">
             Core
           </a>
+          <ul class="nav navbar-nav">
+            <li clasxs="active"><a href="{% url home %}">Home</a></li>
+            <li clasxs="active"><a href="{% url search %}">Search</a></li>
+            <li claxss="active"><a href="{% url settings %}">Settings</a></li>
+          </ul>
           <div class="nav-collapse collapse">
             <ul class="nav" id="primaryNav">
             </ul>
