@@ -1,0 +1,12 @@
+<VirtualHost *:80>
+    WSGIScriptAlias / /opt/phalanxlinq/phalanxlinq/wsgi.py
+    WSGIDaemonProcess phalanxlinqproc threads=15 maximum-requests=1000 home=/opt/phalanxlinq/phalanxlinq
+    WSGIProcessGroup phalanxlinqproc
+    WSGIApplicationGroup %{GLOBAL}
+
+    Alias /static /opt/phalanxlinq/web/static
+    <Directory /opt/phalanxlinq>
+        Order allow,deny
+        Allow from all
+    </Directory> 
+</VirtualHost>
