@@ -165,6 +165,29 @@ LOGGING = {
     }
 }
 
+COMPANY_FLAGS = {
+    'WomanOwnedIndicator' : 'woman',
+    'WomanOwnedBusinessEnterpriseIndicator' : 'woman-biz',
+    'VeteranOwnedIndicator' : 'veteran',
+    'VeteranBusinessEnterpriseIndicator' : 'veteran-biz',
+    'VietnamVeteranOwnedIndicator' : 'veteran-viet',
+    'MinorityIndicator' : 'minority',
+    'GreenBusinessIndicator' : 'green',
+    'AlaskanNativeCorporationIndicator' : 'alaskan-native',
+    'Bankruptcyindicator' : 'bankruptcy',
+    'CertifiedSmallBusinessIndicator' : 'certified-small-biz',
+    'SmallBusinessIndicator' : 'small-biz',
+    'DisabledVeteranBusinessEnterpriseIndicator' : 'disabled-veteran',
+    'DisadvantagedBusinessEnterpriseIndicator' : 'disadvanted',
+    'DisadvantagedVeteranEnterpriseIndicator' : 'disadvanted-veternan',
+    'SmallDisadvantagedBusinessIndicator' : 'disadvanted-small-biz',
+    'Debarrment' : 'debarrment',
+    'HubZoneCertificationIndicator' : 'hub-zone-certified',
+    'LaborSurplusAreaIndicator' : 'labor-surplus-area',
+    'MinorityBusinessEnterpriseIndicator' : 'minority-biz',
+    'SuitsLiensJudgmentsIndicator' : 'suits-lien-judgements',
+}
+
 
 ACCOUNT_KEY = 'ENTER_YOUR_AZURE_ACCOUNT_KEY_HERE'
 

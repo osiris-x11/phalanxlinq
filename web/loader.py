@@ -379,19 +379,61 @@ def consolidate():
         print entity, coll.count(), cc
 
 def set_flags():
+    flag_map = {
+        'WomanOwnedIndicator' : 'woman',
+        'WomanOwnedBusinessEnterpriseIndicator' : 'woman-biz',
+        'VeteranOwnedIndicator' : 'veteran',
+        'VeteranBusinessEnterpriseIndicator' : 'veteran-biz',
+        'VietnamVeteranOwnedIndicator' : 'veteran-viet',
+        'MinorityIndicator' : 'minority',
+        'GreenBusinessIndicator' : 'green',
+        'AlaskanNativeCorporationIndicator' : 'alaskan-native',
+        'Bankruptcyindicator' : 'bankruptcy',
+        'CertifiedSmallBusinessIndicator' : 'certified-small-biz',
+        'SmallBusinessIndicator' : 'small-biz',
+        'DisabledVeteranBusinessEnterpriseIndicator' : 'disabled-veteran',
+        'DisadvantagedBusinessEnterpriseIndicator' : 'disadvanted',
+        'DisadvantagedVeteranEnterpriseIndicator' : 'disadvanted-veternan',
+        'SmallDisadvantagedBusinessIndicator' : 'disadvanted-small-biz',
+        'Debarrment' : 'debarrment',
+        'HubZoneCertificationIndicator' : 'hub-zone-certified',
+        'LaborSurplusAreaIndicator' : 'labor-surplus-area',
+        'MinorityBusinessEnterpriseIndicator' : 'minority-biz',
+        'SuitsLiensJudgmentsIndicator' : 'suits-lien-judgements',
+    }
+#    print flag_map.values()
+#    exit()
+#
+
     conn = Connection('localhost')
     db = conn.hit
+    all_flags = []
     for row in db.companies.find():
         flags = []
-        if row['Addl']['WomanOwnedIndicator'] == 'Y':
-            flags.append('woman')
-        if row['Addl']['VeteranOwnedIndicator'] == 'Y':
-            flags.append('veteran')
-        if row['Addl']['MinorityIndicator'] == 'Y':
-            flags.append('minority')
-        if row['Addl']['GreenBusinessIndicator'] == 'Y':
-            flags.append('green')
+        for key, value in row['Addl'].items():
+            if value == 'Y' and key[-1] != '1' and key[-1] != '2':
+                key = key.replace('Indicator', '')
+                key = key.replace('indicator', '')
+                all_flags.append(key)
+                flags.append(key)
+#        for db_key, flag_name in flag_map.items():
+#            if row['Addl'][db_key] == 'Y':
+#                flags.append(flag_name)
+#        if row['Addl']['WomanOwnedIndicator'] == 'Y':
+#            flags.append('woman')
+#        if row['Addl']['VeteranOwnedIndicator'] == 'Y':
+#            flags.append('veteran')
+#        if row['Addl']['MinorityIndicator'] == 'Y':
+#            flags.append('minority')
+#        if row['Addl']['GreenBusinessIndicator'] == 'Y':
+#            flags.append('green')
+ #       if row['Addl']['AlaskanNativeCorporationIndicator'] == 'Y'
+
         db.companies.update({'_id' : row['_id']}, { '$set' : { 'Flags' : flags } }) 
+    all_flags = sorted(list(set(all_flags)))
+    db.companies_flags.remove()
+    db.companies_flags.insert({'_id': 1, 'flags' : all_flags})
+    print all_flags
 
 
 def geocode():

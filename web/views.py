@@ -32,6 +32,13 @@ def search(request):
         while code[-1] == '0' and len(code)>2:
             code = code[0:-1]
         return code
+    def convert_case(s):
+        so = ''
+        for c in s:
+            if c == c.upper():
+                so += ' '
+            so += c
+        return so.strip()
 
     MAX_PER_PAGE = 500
 #    SEARCH_LIMIT = 1000
@@ -60,7 +67,11 @@ def search(request):
 
     flag_alls = [opt for opt in opts if opt != 'full']
     if len(flag_alls):
-        fil['Flags'] = { '$all' : flag_alls }
+        fil['Flags'] = { '$in' : flag_alls }
+#        fil['$or'] = [
+#            { 'Flags' : { '$in' : [flag] } } for flag in flag_alls
+#        ]
+#        fil['Flags'] = { '$all' : flag_alls }
 
     if 'full' not in opts and len(prefs['SICs']):
         sics = prefs['SICs']
@@ -89,7 +100,9 @@ def search(request):
         for n in range(1, num_pages + 1) ]
     c['page_num'] = page_num
     c['pages_prev'] = [pg for pg in c['pages'] if pg['num'] == page_num - 1] 
-    c['pages_next'] = [pg for pg in c['pages'] if pg['num'] == page_num + 1] 
+    c['pages_next'] = [pg for pg in c['pages'] if pg['num'] == page_num + 1]
+
+    c['available_flags'] = [ {'value': f, 'name': convert_case(f)} for f in db.companies_flags.find_one({'_id': 1})['flags']]
 
     c['rows_json'] = json.dumps(c['rows'])
     c['q'] = q

@@ -6,29 +6,39 @@
 
 {% block content %}
 
+<div class="well">
 <form class="navbar-search" action="{% url search %}">
-    <input class="form-control" type="text" name="q" class="search-query" placeholder="Search" value="{{q}}" autocomplete="off">
+    <div class="row">
+        <div class="col-lg-11">
+            <input class="form-control" type="text" name="q" class="search-query" placeholder="Search" value="{{q}}" autocomplete="off">
+        </div>
+        <div class="col-lg-1">
+            <input class="btn btn-primary" type="submit" value="Search" />
+        </div>
+    </div>
+    <div class="row">
 
-    Only show companies that are:
-    <label>
-    <input type="checkbox" name="opts" value="minority" {% if 'minority' in opts %}checked{%endif%}> Minority-Owned</label>
 
-    <label>
-    <input type="checkbox" name="opts" value="woman" {% if 'woman' in opts %}checked{%endif%}> Woman-Owned</label>
+        <div class="col-lg-3">
+        Only show companies that are:
+        <select multiple name="opts" id="opts" style="width:100%">
+        {% for flag in available_flags %}
+            <option value="{{flag.value}}" {% if flag.value in opts %}selected{%endif%}>{{flag.name}}</option>
+        {% endfor %}
+        </select>
+        <script type="text/javascript">
+        $('#opts').select2({containerCssxClass:'form-control'});</script>
+    </div>
 
-    <label>
-    <input type="checkbox" name="opts" value="veteran" {% if 'veteran' in opts %}checked{%endif%}> Veteran-Owned</label>
 
-    <label>
-    <input type="checkbox" name="opts" value="green" {% if 'green' in opts %}checked{%endif%}> Green</label>
+        <br />
+        Expanded search: 
+        <label>
+        <input type="checkbox" name="opts" value="full" {% if 'full' in opts %}checked{%endif%}> Include Companies outside my <a href="{%url settings%}">Preferences</a></label>
 
-    <br />
-    Expanded search: 
-    <label>
-    <input type="checkbox" name="opts" value="full" {% if 'full' in opts %}checked{%endif%}> Include Companies outside my <a href="{%url settings%}">Preferences</a></label>
-
-    <input class="btn btn-primary" type="submit" value="Search" />
+    </div>
 </form>
+</div>
 
 <script type="text/javascript">
 var rows = {{rows_json|safe}};
