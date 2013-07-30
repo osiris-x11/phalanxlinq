@@ -79,6 +79,10 @@ def search(request):
         rows = rows[start_offset:start_offset+MAX_PER_PAGE]
         c['rows'] = [r for r in rows]
 
+    user_duns = [e['DUNS'] for e in prefs['companies']]
+    for row in c['rows']:
+        row['active'] = row['DUNS'] in user_duns
+
     # pagination
     num_pages = int(ceil(float(c['totalRows']) / MAX_PER_PAGE))
     c['pages'] = [ { 'num': n, 'url' : reverse('search') + '?q=' + quote(q) + (''.join(['&opts=' + opt for opt in opts]) ) +'&page=%s' % n }

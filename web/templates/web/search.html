@@ -38,6 +38,7 @@ var rows = {{rows_json|safe}};
 <h3>Search Results</h3>
 Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}
 
+{% if pages_prev.0.url or pages_next.0.url %}
 <ul class="pagination">
       <li {% if not pages_prev.0.url %}class="disabled"{%endif%}><a href="{{pages_prev.0.url}}">&laquo;</a></li>
 
@@ -48,6 +49,7 @@ Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}
 
       <li {% if not pages_next.0.url %}class="disabled"{%endif%}><a href="{{pages_next.0.url}}">&raquo;</a></li>
 </ul>
+{% endif %}
 
 <table class="table table-striped">
     <thead>
@@ -55,7 +57,8 @@ Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}
             <th>DUNS</th>
             <th>Company</th>
             <th>Location</th>
-            <th>Size</th>
+            <th>Employees</th>
+            <th>Revenue</th>
         </tr>
     </thead>
     <tbody>
@@ -63,10 +66,14 @@ Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}
         <tr>
             <td>
                 {{row.DUNS}}
-                <button onclick="addCompany('{{row.DUNS}}')">add</button>
             </td>
             <td>
-                <a href="{% url company row.DUNS %}">{{row.Name}}</a>
+                {% if row.active %}
+                    <i class="icon-star icon-large hit-bounce" style="color:#66f"></i>
+                {% else %}
+                {% endif %}
+                <a href="{% url company row.DUNS %}">{{row.Name}}</a><br />
+                {% include 'web/includes/co_indicators.html' with co=row %}
             </td>
             <td>
                 {{row.Location.Street1}}<br/>
@@ -74,12 +81,19 @@ Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}
                 {{row.Location.Country}}
             </td>
             <td>
-                {{ row.EmployeesTotal }}
-                {{ row.EmployeesHere }}
-                {{ row.AnnualSalesUSD }}
+                {% if row.EmployeesHere %}
+                    {{ row.EmployeesHere }} employees
+                {% endif %}
+                {% if row.EmployeesTotal %}
+                    {% if row.EmployeesTotal != row.EmployeesHere %}
+                        ({{ row.EmployeesTotal }} total)
+                    {% endif %}
+                {% endif %}
             </td>
             <td>
-                {% include 'web/includes/co_indicators.html' with co=row %}
+                {% if row.AnnualSalesUSD %}
+                    ${{ row.AnnualSalesUSD|intcomma }}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

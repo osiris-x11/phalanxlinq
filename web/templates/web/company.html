@@ -21,8 +21,6 @@
 
 {% include 'web/includes/co_personalized_profile.html' with duns=co.DUNS %}
 
-<div id="map" style="height:300px"></div>
-
 <script type="text/javascript">
 var rows = {{rows_json|safe}};
 </script>
@@ -79,11 +77,12 @@ BankruptcyDate : {{co.Addl.BankruptcyDate}} {{co.Addl.Bankruptcyindicator}}
 
 
 
+<!--
 <span class="glyphicon glyphicon-ok"></span>
 <hr/>
 
 <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
-
+-->
 
 {% endblock %}

@@ -1,0 +1,85 @@
+.hit-bounce
+{
+  -webkit-animation-duration: 2s;
+     -moz-animation-duration: 2s;
+       -o-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-name: hit-bounce;
+     -moz-animation-name: hit-bounce;
+       -o-animation-name: hit-bounce;
+          animation-name: hit-bounce;
+  -webkit-animation-iteration-count: infinite;
+     -moz-animation-iteration-count: infinite;
+       -o-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  position:relative;
+}
+
+
+@-webkit-keyframes hit-bounce {
+  0%, 33%, 67% {
+    top:0;
+    -webkit-animation-timing-function: ease-out;
+  }
+  
+  17%, 50%, 83%{
+    top: -10px;
+    -webkit-animation-timing-function: ease-in;
+  }
+  
+  17%{
+    top: -20px;
+    -webkit-animation-timing-function: ease-in;
+  }
+}
+
+@-moz-keyframes hit-bounce {
+  0%, 33%, 67% {
+    top:0;
+       -moz-animation-timing-function: ease-out;
+  }
+  
+  17%, 50%, 83%{
+    top: -10px;
+       -moz-animation-timing-function: ease-in;
+  }
+  
+  17%{
+    top: -20px;
+       -moz-animation-timing-function: ease-in;
+  }
+}
+
+@-o-keyframes hit-bounce {
+  0%, 33%, 67% {
+    top:0;
+         -o-animation-timing-function: ease-out;
+  }
+  
+  17%, 50%, 83%{
+    top: -10px;
+         -o-animation-timing-function: ease-in;
+  }
+  
+  17%{
+    top: -20px;
+         -o-animation-timing-function: ease-in;
+  }
+}
+
+@keyframes hit-bounce {
+  0%, 33%, 67% {
+    top:0;
+            animation-timing-function: ease-out;
+  }
+  
+  17%, 50%, 83%{
+    top: -10px;
+            animation-timing-function: ease-in;
+  }
+  
+  17%{
+    top: -20px;
+            animation-timing-function: ease-in;
+  }
+}

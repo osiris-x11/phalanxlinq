@@ -46,7 +46,7 @@ Strategies for healthcare biz development (using D&B data):
 
 
 
-sudo mongod --setParameter textSearchEnabled=true
+sudo mongod --setParameter textSearchEnabled=true > /dev/null &
 
 
 
