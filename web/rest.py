@@ -12,9 +12,7 @@ from pymongo import Connection
 @csrf_exempt
 @rest_json()
 def mongo_q(request, dataset):
-    conn = Connection('localhost')
-    db = conn.hit
-    coll = db[dataset]
+    coll = _db()[dataset]
     s = 'TODO'
 
     return s

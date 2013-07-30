@@ -48,12 +48,11 @@ def azure_get_all(dataset):
 
 def _db():
     conn = Connection('localhost')
-    db = conn.hit
+    db = conn.phalanxlinq
     return db
 
 def populate_mongo():
-    conn = Connection('localhost')
-    db = conn.hit
+    db = _db()
 
     for entity in ENTITIES:
         coll = db[entity]
@@ -66,8 +65,7 @@ def populate_mongo():
         print 'done'
 
 def consolidate():
-    conn = Connection('localhost')
-    db = conn.hit
+    db = _db()
 
     master = db.companies
 
@@ -405,8 +403,7 @@ def set_flags():
 #    exit()
 #
 
-    conn = Connection('localhost')
-    db = conn.hit
+    db = _db()
     all_flags = []
     for row in db.companies.find():
         flags = []
@@ -437,8 +434,7 @@ def set_flags():
 
 
 def geocode():
-    conn = Connection('localhost')
-    db = conn.hit
+    db = _db()
     c = 0
     for row in db.companies.find({'Location.Latitude' : None}):
         loc = row['Location']
@@ -460,8 +456,7 @@ def geocode():
     print c
 
 def geocode_bing():
-    conn = Connection('localhost')
-    db = conn.hit
+    db = _db()
     c = 0
     for row in db.companies.find({'Location.Latitude' : None}):
         loc = row['Location']
@@ -489,8 +484,7 @@ def geocode_bing():
 
 
 def describe_entities():
-    conn = Connection('localhost')
-    db = conn.hit
+    db = _db()
     all_keys = []
     for entity in ENTITIES:
         coll = db[entity]
