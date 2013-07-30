@@ -24,21 +24,9 @@
 <div id="map" style="height:300px"></div>
 
 <script type="text/javascript">
-if ('{{co.Location.Latitude}}' !== '')
-{
-
-	var map = L.map('map').setView([{{co.Location.Latitude}}, {{co.Location.Longitude}}], 13);
-	L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-				maxZoom: 18,
-				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-			}).addTo(map);
-
-
-			L.marker([{{co.Location.Latitude}}, {{co.Location.Longitude}}]).addTo(map)
-				.bindPopup("<b>{{co.Name}}</b><br />").openPopup();
-
-}
+var rows = {{rows_json|safe}};
 </script>
+{% include 'web/includes/map_widget.html' with companies='rows' %}
 
 
 

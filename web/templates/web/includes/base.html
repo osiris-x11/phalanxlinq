@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>HIT: {% block title %}Home{% endblock %}</title>
+    <title>Phalanx Linq: {% block title %}Home{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA0r5uAPjqvwD22YMAzs7UAMCjMQDPztQAoqKkANXMogDNuGUA4b06AM6wRgDFxcoA+eq+ANva3QDS0M8A4N/gANSvEQDbx3UA8tyPAMbGxwDqzVwA6tN4AIyMkQDX08gA09DHAObOewCenqMA6slWAOzNYgD24p0A9dyVANPR0gD48dYA9dh7ANDOygD63qUA1NC/APvgtQC2nTkA+erCAO7u7wD15b4A6NynAOnNZwD+/v4A+ea1AM7O1gDy3pwA48dXAN/f4wBWVlcA+ee5AMyrMADkzXMAzs7VAPnqwABGRkcA8NNuANDP0wDhvz4A99qWAPLaiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApLQAAAAAAAAAAAAAAAAAAIDcAAAAAAAAAAAAAAAAAADURAAAAAAAAAAAAAAAAAAAsPAAAAAAAAAAAAAAAAAAAGhYAAAAAAAAAAAAAAAAAAColMwAAAAAAAAAAAAAAACMKKgYAAAAAAAAAAAAAAAAAHDEAAAAAAAAAAAAAAAAAEgAUNjkAAAAAAAAAAAAAAAMMLyEAAAAAAAAAAAAXCz49DAQfMCsbBwAAABknEyg0IiQmHS44HgUPAAAAAAABOg0QFAIVCQAAAAAAAAAAAAA7CBgEAAAAAAAAAAAAAAAAAA4yAAAAAAAAAP//AAD+fwAA/n8AAP5/AAD+fwAA/n8AAP4/AAD8PwAA/n8AAP0fAAD8PwAA4AMAAIABAADwDwAA/D8AAP5/AAA=" rel="icon" type="image/x-icon" />
 
@@ -54,13 +54,13 @@
             <input type="text" name="q" class="search-query" placeholder="Search">
           </form>
 
-          <a class="navbar-brand" href="{% url home %}">
-           <i class="icon-user-md"></i> Healthcare CRM
+          <a class="navbar-brand" href="{% url home %}" style="position:relative">
+           <i class="icon-user-md"></i> Phalanx Linq <div class="label label-info" style="position:absolute;top:40px;left:30px">For Healthcare</div>
           </a>
           <ul class="nav navbar-nav">
-            <li clasxs="active"><a href="{% url home %}">Home</a></li>
-            <li clasxs="active"><a href="{% url search %}">Search</a></li>
-            <li claxss="active"><a href="{% url settings %}">Settings</a></li>
+            <li {% if '/' == request.path %}class="active"{% endif %}><a href="{% url home %}">Dashboard</a></li>
+            <li {% if 'search' in request.path %}class="active"{% endif %}><a href="{% url search %}">Search</a></li>
+            <li {% if 'settings' in request.path %}class="active"{% endif %}><a href="{% url settings %}">Settings</a></li>
           </ul>
           <div class="nav-collapse collapse">
             <ul class="nav" id="primaryNav">
@@ -78,8 +78,10 @@
     <div id="footer">
       <div class="container">
         <p class="muted credit">
+          <!--
           Project Home: <a href="https://github.com/osiris-x11/hit-azure">https://github.com/osiris-x11/hit-azure</a>.
-          &copy; Umar Siddiqui Inc. {% now "Y" %} All rights reserved.
+          &copy; Umar Siddiqui {% now "Y" %} All rights reserved.
+        -->
         </p>
       </div>
     </div>

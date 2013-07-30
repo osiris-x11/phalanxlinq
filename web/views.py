@@ -100,7 +100,9 @@ def company(request, duns):
     all_info['Addl'] = OrderedDict(sorted(all_info['Addl'].items()))
     all_info = OrderedDict(sorted(all_info.items()))
 
+
     c = { 'co_json' : json.dumps(all_info), 'co': all_info }
+    c['rows_json'] = json.dumps([all_info])
 
     return render(request, 'web/company.html', c)
 

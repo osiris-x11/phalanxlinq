@@ -30,48 +30,10 @@
     <input class="btn btn-primary" type="submit" value="Search" />
 </form>
 
-<div id="map" style="height:400px;display:none"></div>
-
 <script type="text/javascript">
 var rows = {{rows_json|safe}};
 </script>
-<script type="text/javascript">
-var mapIt = function()
-{
-    var map = L.map('map');//.setView([30.2669, -97.7428], 12);
-    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-            }).addTo(map);
-
-
-    (function(){
-        var coords;
-        var markers = L.markerClusterGroup();
-        var mapEmpty = true;
-        $(rows).each(function(idx, row){
-            if (row.Location.Latitude !== null && row.Location.Longitude !== null)
-            {
-                mapEmpty = false;
-                var marker = L.marker(new L.LatLng(row.Location.Latitude, row.Location.Longitude), { title: row.Name });
-                marker.bindPopup(row.Name);
-                markers.addLayer(marker);
-            }
-
-        });
-
-        if (mapEmpty)
-            return;
-        $('#map').show();
-        map.addLayer(markers);
-        map.fitBounds(markers.getBounds());
-    })();
-}
-
-{% if rows %}
-mapIt()
-{%endif%}
-</script>
+{% include 'web/includes/map_widget.html' with companies='rows' %}
 
 <h3>Search Results</h3>
 Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}

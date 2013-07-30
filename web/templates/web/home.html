@@ -10,11 +10,9 @@
         .done(function(cos){
             cos = { cos : cos };
             console.log(cos);
+            initMap(cos.cos);
             var vm = ko.mapping.fromJS(cos);
             ko.applyBindings(vm);
-
-
-
         })
     function ARViewModel()
     {
@@ -30,8 +28,6 @@
         self.removeAccount = function() {
             self.accounts.remove(this);
         };
-
-        self.duns = ko.observable('123');
     }
 
 
@@ -40,6 +36,13 @@
     });
 </script>
 
+<h3>Dashboard</h3>
+
+<div class="row">
+    <div class="col-lg-6">
+{% include 'web/includes/map_widget.html' %}
+    </div>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -57,9 +60,6 @@
             <!-- ko text: Name --><!-- /ko --><br />
             <!-- ko text: Location.City --><!-- /ko -->,
             <!-- ko text: Location.State --><!-- /ko -->
-        </td>
-        <td>
-            <input type="number" />
         </td>
     </tr>
     </tbody>
