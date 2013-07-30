@@ -1,37 +1,31 @@
 {% extends "web/includes/base.html" %}
 
+{% load humanize %}
+
 {% block title %}Search Results{% endblock %}
 
 {% block content %}
 
-
-<script type="text/javascript">
-$(function(){
-    var vm = {
-    };
-//    console.log(JSON.stringify(vm.sics));
-//    ko.applyBindings(vm);
-});
-</script>
-
 <form class="navbar-search" action="{% url search %}">
-    <input class="form-control" type="text" name="q" class="search-query" placeholder="Search" value="{{q}}">
+    <input class="form-control" type="text" name="q" class="search-query" placeholder="Search" value="{{q}}" autocomplete="off">
 
-    Only Show:
+    Only show companies that are:
     <label>
-    <input type="checkbox" name="opts" value="minority" {% if 'minority' in opts %}checked{%endif%}> Minority</label>
-
-    <label>
-    <input type="checkbox" name="opts" value="woman" {% if 'woman' in opts %}checked{%endif%}> Woman</label>
+    <input type="checkbox" name="opts" value="minority" {% if 'minority' in opts %}checked{%endif%}> Minority-Owned</label>
 
     <label>
-    <input type="checkbox" name="opts" value="veteran" {% if 'veteran' in opts %}checked{%endif%}> Veteran</label>
+    <input type="checkbox" name="opts" value="woman" {% if 'woman' in opts %}checked{%endif%}> Woman-Owned</label>
+
+    <label>
+    <input type="checkbox" name="opts" value="veteran" {% if 'veteran' in opts %}checked{%endif%}> Veteran-Owned</label>
+
+    <label>
+    <input type="checkbox" name="opts" value="green" {% if 'green' in opts %}checked{%endif%}> Green</label>
 
     <br />
-    Dataset:
+    Expanded search: 
     <label>
-    <input type="checkbox" name="opts" value="full" {% if 'full' in opts %}checked{%endif%}> Full DataSet</label>
-
+    <input type="checkbox" name="opts" value="full" {% if 'full' in opts %}checked{%endif%}> Include Companies outside my <a href="{%url settings%}">Preferences</a></label>
 
     <input class="btn btn-primary" type="submit" value="Search" />
 </form>
@@ -39,10 +33,12 @@ $(function(){
 <div id="map" style="height:400px;display:none"></div>
 
 <script type="text/javascript">
+var rows = {{rows_json|safe}};
+</script>
+<script type="text/javascript">
 var mapIt = function()
 {
-    $('#map').show();
-    var map = L.map('map').setView([30.2669, -97.7428], 13);
+    var map = L.map('map');//.setView([30.2669, -97.7428], 12);
     L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
                 maxZoom: 18,
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
@@ -52,26 +48,23 @@ var mapIt = function()
     (function(){
         var coords;
         var markers = L.markerClusterGroup();
-    {% for row in rows %}
-        coords = ['{{row.Location.Latitude}}', '{{row.Location.Longitude}}'];
-        if (coords[0] !== '' && coords[1] !== '')
-        {
-            coords = [Number(coords[0]), Number(coords[1])];
-            if (isNaN(coords[0]) || isNaN(coords[1]))
-                ;
-            else {
-                var marker = L.marker(new L.LatLng(coords[0], coords[1]), { title: '{{row.Name}}' });
-                marker.bindPopup('{{row.Name}}');
+        var mapEmpty = true;
+        $(rows).each(function(idx, row){
+            if (row.Location.Latitude !== null && row.Location.Longitude !== null)
+            {
+                mapEmpty = false;
+                var marker = L.marker(new L.LatLng(row.Location.Latitude, row.Location.Longitude), { title: row.Name });
+                marker.bindPopup(row.Name);
                 markers.addLayer(marker);
             }
-//            L.marker(coords).addTo(map)
-//                .bindPopup("<b>{{row.Name}}</b><br />").openPopup();
 
-        }
-    {% endfor %}
+        });
+
+        if (mapEmpty)
+            return;
+        $('#map').show();
         map.addLayer(markers);
         map.fitBounds(markers.getBounds());
-
     })();
 }
 
@@ -81,7 +74,18 @@ mapIt()
 </script>
 
 <h3>Search Results</h3>
-Results: <!--ko text:items.length--><!--/ko-->
+Results: {{totalRows|intcomma}}, Displaying: {{rows|length}}
+
+<ul class="pagination">
+      <li {% if not pages_prev.0.url %}class="disabled"{%endif%}><a href="{{pages_prev.0.url}}">&laquo;</a></li>
+
+
+        {% for page in pages %}
+          <li {% if page_num == page.num %}class="active"{%endif%}><a href="{{page.url}}">{{page.num}}</a></li>
+        {% endfor %}
+
+      <li {% if not pages_next.0.url %}class="disabled"{%endif%}><a href="{{pages_next.0.url}}">&raquo;</a></li>
+</ul>
 
 <table class="table table-striped">
     <thead>
@@ -97,6 +101,7 @@ Results: <!--ko text:items.length--><!--/ko-->
         <tr>
             <td>
                 {{row.DUNS}}
+                <button onclick="addCompany('{{row.DUNS}}')">add</button>
             </td>
             <td>
                 <a href="{% url company row.DUNS %}">{{row.Name}}</a>
@@ -110,13 +115,9 @@ Results: <!--ko text:items.length--><!--/ko-->
                 {{ row.EmployeesTotal }}
                 {{ row.EmployeesHere }}
                 {{ row.AnnualSalesUSD }}
-
-                --
             </td>
             <td>
-                {{row.Addl.MinorityIndicator}}
-                {{row.Addl.VeteranOwnedIndicator}}
-                {{row.Addl.WomanOwnedBusinessEnterpriseIndicator}}
+                {% include 'web/includes/co_indicators.html' with co=row %}
             </td>
         </tr>
         {% endfor %}

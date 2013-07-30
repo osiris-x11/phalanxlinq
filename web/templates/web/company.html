@@ -6,17 +6,12 @@
 {% block content %}
 
 
-<script type="text/javascript">
-$(function(){
-    var vm = {{co_json|safe}};
-
-//    ko.applyBindings(vm);
-});
-</script>
 
 <div class="navbar">
   <a class="navbar-brand" href="#">{{co.Name}}</a>
   <p class="navbar-text">
+    {% include 'web/includes/co_indicators.html' with co=co %}
+
   	{{ co.CEO.Title }} : {{ co.CEO.Name }}<br />
   	Employees: {{ co.EmployeesHere }} of {{ co.EmployeesTotal }}<br />
   	Sales: ${{ co.AnnualSalesUSD|intcomma }}<br />
@@ -24,6 +19,7 @@ $(function(){
   </p>
 </div>
 
+{% include 'web/includes/co_personalized_profile.html' with duns=co.DUNS %}
 
 <div id="map" style="height:300px"></div>
 
@@ -54,42 +50,6 @@ Small business: {{co.Addl.SmallBusinessIndicator}}
 Industry: {{co.Industry.LineOfBusiness }}
 
 BankruptcyDate : {{co.Addl.BankruptcyDate}} {{co.Addl.Bankruptcyindicator}}
-
-<div class="panel">
-	Minority Owned
-{% if co.Addl.MinorityIndicator == 'Y' %}
-	{{co.Addl.Minority1DateReceivedbyDnB}}
-	Code: {{co.Addl.MinorityCertificationCode1 }}
-	Date: {{co.Addl.MinorityCertificationDate1 }}
-	Date: {{co.Addl.MinorityCertificationExpirationDate1 }}
-	{{co.Addl.MinorityCertificationNumber1}}
-	Date: {{co.Addl.MinorityClassificationCode1 }}
-	Date: {{co.Addl.MinoritySourceCodeName1 }}
-	Date: {{co.Addl.MinoritySourceLevelCode1 }}
-
-	{% if co.Addl.Minority2DateReceivedbyDnB %}
-
-	{{co.Addl.Minority2DateReceivedbyDnB}}
-	Code: {{co.Addl.MinorityCertificationCode2 }}
-	Date: {{co.Addl.MinorityCertificationDate2 }}
-	Date: {{co.Addl.MinorityCertificationExpirationDate2 }}
-	{{co.Addl.MinorityCertificationNumber2}}
-	Date: {{co.Addl.MinorityClassificationCode2 }}
-	Date: {{co.Addl.MinoritySourceCodeName2 }}
-	Date: {{co.Addl.MinoritySourceLevelCode2 }}
-
-	{% endif %}
-{% endif %}
-</div>
-
-<table class="table table-striped">
-	<tr>
-		<td>M</td>
-
-
-	</tr>
-
-</table>
 
 <div class="row">
 	<div class="col-lg-4">
@@ -123,93 +83,19 @@ BankruptcyDate : {{co.Addl.BankruptcyDate}} {{co.Addl.Bankruptcyindicator}}
 	{% endif %}
 </div>
 
+<!--
 <h5>Debug Info</h5>
 
 <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
+-->
 
 
 
-
-Annual Sales: <span data-bind="text: AnnualSalesUSDollars"></span>
 <span class="glyphicon glyphicon-ok"></span>
 <hr/>
 
 <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
-
-
-<!--ko if: DoingBusinessAs1 -->
-DBA <span data-bind="text: DoingBusinessAs1"></span>
-<!--/ko-->
-
-<!--ko if: DoingBusinessAs2 -->
-, <span data-bind="text: DoingBusinessAs2"></span>
-<!--/ko-->
-<!--ko if: DoingBusinessAs3 -->
-, <span data-bind="text: DoingBusinessAs3"></span>
-<!--/ko-->
-
-<!--ko if: DoingBusinessAs3 -->
-, <span data-bind="text: DoingBusinessAs4"></span>
-<!--/ko-->
-<!--ko if: DoingBusinessAs3 -->
-, <span data-bind="text: DoingBusinessAs5"></span>
-<!--/ko-->
-<br />
-Single Location: <span data-bind="text: SingleLocation"></span>
-
-<br />
-
-
-Tree:
-<br/>
-
-<div class="panel">
-  <div class="panel-heading">Panel heading</div>
-  Panel content
-</div>
-
-<div class="row">
-	<div class="span4">
-<span class="badge text-center" data-bind="text:GlobalUltimateOrganizationName"></span></br>
-<div style="background-color:#999;width:50px">.</div>
-<span class="badge" data-bind="text:DomesticUltimateOrganizationName"></span></br>
-<span class="badge" data-bind="text:ParentOrganizationName"></span></br>
-<span class="badge" data-bind="text:Company"></span></br>
-</div>
-</div>
-
-
-<!--ko if: ParentDUNS != DUNSNumber && ParentDUNS != '000000000' -->
-<h3>Parent</h3>
-
-ParentOrganizationAddress": "",
-  "ParentOrganizationAddress2": "",
-  "ParentOrganizationCity": "",
-  "ParentOrganizationCountry": "",
-  "ParentOrganizationName": "",
-  "ParentOrganizationPostalCode": "",
-  "ParentOrganizationStateAbbrv
-<!--/ko-->
-
-DomesticUltimateDUNS,
-HQOrganizationAddress,
-
-GlobalUltimateDUNS
-
-
-
-<!--ko if: DomesticUltimateDUNS != DUNSNumber-->
-
-<!--/ko-->
-CompanyStartYear
-CongressDistrict
-ControlYear
-DUNSNumber
-Debarrment
-": "DAYLIGHT DONUTS",
-  "DoingBusinessAs2": "REX BONELESS FRIED CHICKEN",
-  "DoingBusinessAs3
 
 
 {% endblock %}

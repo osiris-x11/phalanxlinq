@@ -1,3 +1,51 @@
+http://kff.org/state-category/providers-service-use/hospital-utilization/
+
+
+Operating cost at a hospital:
+- 40% ~ salary
+- 20% ~ supply
+- 10% ~ benefits
+- 10% ~ capital expenditure
+- 10% ~ misc.
+- 5% ~ utility/insurance
+- 5& ~ rent/maint'
+
+Sources of revenue at a hospital:
++ 43% ~ Medicare
++ 33% ~ managed care
++ 12% ~ commercial
++ 9% ~ Medicaid
++ 2% ~ self-pay
+
+Interesting demographic/stats to analyze:
+-> # hospital beds per-1000 people
+-> # nursing home beds per-1000 people
+
+Government health dollars breakdown (namely Medicare, total of $509B ~ 2010):
+4.0% ($19B) - home health services/agencies
+5.5% ($27B) - skilled nursing facilities
+5.5% ($27B) - hospital outpatient (ambulatory/primary/speciality/etc)
+12% ($60B) - other services
+11.5% ($59B) - prescription drug plans
+12.5% ($63B) - physician fee schedule
+22.5% ($115B) - group plans
+27.0% ($138B) - hospital inpatient (admitted/surgical/emergency/etc)
+
+Pharmaceutical expenses (2008):
+36% - other
+31% - marketing & administration
+18% - profits
+15% - R&D
+
+Strategies for healthcare biz development (using D&B data):
+* gross profit improvement
+* corporate administration reduction
+* advertising expense optimization
+* distribution improvement + other cost saving
+
+
+
+
 sudo mongod --setParameter textSearchEnabled=true
 
 
@@ -5,6 +53,10 @@ sudo mongod --setParameter textSearchEnabled=true
 db.Firmographics.ensureIndex({ "$**" : "text" }, { "weights" : { "Company" : 10, "DoingBusinessAs1" : 7 }, "name" : "TextIndex" })
 
 db.companies.ensureIndex({ "$**" : "text" }, { "weights" : { "Name" : 10, "DBAs" : 7, "Industry.LineOfBusiness" : 3 }, "name" : "TextIndex" })
+
+db.companies.ensureIndex({'AnnualSalesUSD':1})
+db.companies.ensureIndex({'Flags':1})
+db.companies.ensureIndex({'Industry.SICs.Code':1})
 
 
 

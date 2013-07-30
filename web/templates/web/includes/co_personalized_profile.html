@@ -1,0 +1,211 @@
+
+<script type="text/javascript">
+$(function(){
+    var vm = {{co_json|safe}};
+
+
+/*
+    $.ajax({ url: REST_BASE + '?with=details' })
+        .done(function(cos){
+            cos = { cos : cos };
+            console.log(cos);
+            var vm = ko.mapping.fromJS(cos);
+            ko.applyBindings(vm);
+
+
+
+        })
+*/
+    function LineItem(name, val)
+    {
+    	this.name = ko.observable(name);
+    	this.amount = ko.observable(val||0);
+    }
+    function ARViewModel()
+    {
+        var self = this;
+        self.active = ko.observable(false);
+        self.setDefaults = function() {
+	        self.expenses = ko.observableArray([
+	        	new LineItem('Salary'),
+	        	new LineItem('Supplies'),
+	        	new LineItem('Benefits'),
+	        	new LineItem('CapEx'),
+	        	new LineItem('Utilities'),
+	        	new LineItem('Insurance'),
+	        	new LineItem('Rent/Maint.'),
+	        	new LineItem('Misc')
+	        ]);
+
+	        self.incomes = ko.observableArray([
+	        	new LineItem('Medicare'),
+	        	new LineItem('Managed Care'),
+	        	new LineItem('Commercial'),
+	        	new LineItem('Medicaid'),
+	        	new LineItem('Self-pay')
+	        	])
+
+	        self.stats = ko.observableArray([
+	        	new LineItem('Number of Beds'),
+	        	new LineItem('Number of ERs'),
+	        	new LineItem('Number of ERs'),
+	        	])
+	    };
+
+        self.putItem = function(ty, name, amt) {
+        	var arr = self[ty]();
+        	for (var i=0; i<arr.length; i++) {
+        		if (arr[i].name() == name)
+        			return arr[i].amount(amt);
+        	}
+        	self[ty].push(new LineItem(name, amt));
+        };
+
+        self.incomes = ko.observableArray();
+        self.expenses = ko.observableArray();
+        self.stats = ko.observableArray();
+        self.setDefaults();
+
+        $.ajax({ url: REST_BASE + '{{duns}}'})
+        	.done(function(data){
+        		self.active(data.active);
+        		$(data.expenses).each(function(){
+        			self.putItem('expenses', this.name, this.amount);
+        		});
+        		$(data.incomes).each(function(){
+        			self.putItem('incomes', this.name, this.amount);
+        		});
+        	})
+//        $.getJSON("/tasks", function(allData) {
+//                var mappedTasks = $.map(allData, function(item) { return new Task(item) });
+//                self.tasks(mappedTasks);
+//            });  
+
+
+        self.addExpense = function() { self.expenses.push(new LineItem()); };
+        self.removeExpense = function() { self.expenses.remove(this); };
+
+        self.addIncome = function() { self.incomes.push(new LineItem()); };
+        self.removeIncome = function() { self.incomes.remove(this); };
+
+        self.addStat = function() { self.stats.push(new LineItem()); };
+        self.removeStat = function() { self.stats.remove(this); };
+
+        self.duns = ko.observable('123');
+		 self.save = function() {
+		        $.ajax({ url: REST_BASE + '{{duns}}',
+		            data: ko.toJSON(self),
+		            type: "POST",
+		            contentType: "application/json",
+		            success: function(result) { alert(result) }
+		        });
+		    }; 
+
+    }
+
+
+    $(function(){
+	    var vm = new ARViewModel();
+	    window.vm = vm;
+	    ko.applyBindings(vm);
+    });
+
+});
+</script>
+
+
+
+<!-- Single button -->
+<div class="btn-group">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    Action <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+  	<li><a href="Javascript:void(0)" onclick="$('#xrow').slideToggle()">Show</a></li>
+    <li><a href="#">Remove from My List</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</div>
+
+
+<!-- ko if: active -->
+	<i class="icon-star"></i>
+
+<!-- /ko -->
+
+<div class="row" id="xrow" style="display:none;z-index:3">
+
+<button data-bind="click: save" class="btn btn-primary">Save</button>
+
+	<div class="col-lg-4 panel">
+	  <div class="panel-heading">
+	  	Expense Profile
+	  	<button class="btn btn-small pull-right" data-bind="click: addExpense"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
+	  </div>
+	  <table>
+		<tbody data-bind="foreach: expenses">
+			<tr>
+				<td>
+					<input class="form-control" type="text" data-bind="value: name" />
+				</td>
+				<td>
+					<input class="form-control" type="number" data-bind="value: amount" />
+				</td>
+				<td>
+					<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeExpense"></span>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	  </div>
+
+	<div class="col-lg-4 panel">
+	  <div class="panel-heading">
+	  	Income Profile
+		<button class="btn btn-small pull-right" data-bind="click: addIncome"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
+	  </div>
+		<table>
+			<tbody data-bind="foreach: incomes">
+				<tr>
+					<td>
+						<input class="form-control" type="text" data-bind="value: name" />
+					</td>
+					<td>
+						<input class="form-control" type="number" data-bind="value: amount" />
+					</td>
+					<td>
+						<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeIncome"></span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+	<div class="col-lg-4 panel">
+	  <div class="panel-heading">
+	  	Statistics
+	  	<button class="btn btn-small pull-right" data-bind="click: addStat"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
+	  </div>
+		<table>
+			<tbody data-bind="foreach: stats">
+				<tr>
+					<td>
+						<input class="form-control" type="text" data-bind="value: name" />
+					</td>
+					<td>
+						<input class="form-control" type="number" data-bind="value: amount" />
+					</td>
+					<td>
+						<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeStat"></span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+</div>

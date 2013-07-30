@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from web.rest import populate_mongo, describe_entities, consolidate, geocode
+from web.loader import populate_mongo, describe_entities, consolidate, geocode, set_flags, loadsic, geocode_bing
 
 class Command(BaseCommand):
     help = 'Load all data'
@@ -10,6 +10,9 @@ class Command(BaseCommand):
             'list' : describe_entities,
             'consolidate' : consolidate,
             'geocode' : geocode,
+            'geocode-bing' : geocode_bing,
+            'flags' : set_flags,
+            'loadsic': loadsic,
         }
         fn = fn_map.get( (args + (None,))[0]  )
         if fn:

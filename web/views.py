@@ -8,8 +8,24 @@ from django.core.urlresolvers import reverse
 import logging
 import re
 import json
-from rest import _db, ENTITIES
+from loader import _db, ENTITIES
 from collections import OrderedDict
+from math import ceil
+from urllib import quote
+
+def layer_user_prefs(prefs, co):
+    pass
+
+
+
+def get_user_prefs(db, user_id = 1):
+    user_settings = db.settings.find_one({'_id' : user_id})
+    user_companies = db.user_companies.find({'user_id' : user_id, 'active' : True})
+    return {
+        'SICs' : user_settings['SICs'] if user_settings else [],
+        'companies' : user_companies,
+    }
+
 
 def search(request):
     def trim_trailing_zeros(code):
@@ -17,51 +33,63 @@ def search(request):
             code = code[0:-1]
         return code
 
-    MAX_RESULTS = 2000
+    MAX_PER_PAGE = 500
+#    SEARCH_LIMIT = 1000
     q = request.GET.get('q', '')
     opts = request.GET.getlist('opts')
+    page_num = request.GET.get('page', 1)
+    try:
+        page_num = int(page_num)
+    except:
+        page_num = 1
+    start_offset = (page_num-1) * MAX_PER_PAGE
+
+
     db = _db()
-#    exp = '^' + re.escape(q)
-#    rows = _db().Firmographics.find({'Company': {'$regex':exp }}, {'_id':0})
+    prefs = get_user_prefs(db)
 
     rows = []
-    c = { 'rows' : [] }
-    settings = db.settings.find_one({'_id' : 1})
+    c = { 'rows' : [], 'totalRows' : 0 }
 
-    fil = {
-#            'Addl' : {
-#                'MinorityIndicator' : 'Y',
-#            },
-#            'Location.State' : 'TX',
-#            'Addl.MinorityIndicator' : 'Y',
-#            'Addl.VeteranOwnedIndicator' : 'Y',
+    proj = {
+        '_id' : 0,
+        'Addl' : 0,
+        'Linkage' : 0,
     }
-    if 'minority' in opts:
-        fil['Addl.MinorityIndicator'] = 'Y'
-    if 'woman' in opts:
-        fil['Addl.WomanOwnedBusinessEnterpriseIndicator'] = 'Y'
-    if 'veteran' in opts:
-        fil['Addl.VeteranOwnedIndicator'] = 'Y'
-    if 'full' not in opts and settings and settings['SICs'] and len(settings['SICs']):
-        sics = settings['SICs']
+    fil = {}
+
+    flag_alls = [opt for opt in opts if opt != 'full']
+    if len(flag_alls):
+        fil['Flags'] = { '$all' : flag_alls }
+
+    if 'full' not in opts and len(prefs['SICs']):
+        sics = prefs['SICs']
         fil['$or'] = [
             { 'Industry.SICs.Code' : re.compile('^' + trim_trailing_zeros(code)) } for code in sics
         ]
 
-#        rows = _db().Firmographics.find({'Company': re.compile('' + re.escape(q), re.IGNORECASE) }, {'_id':0})
     if len(q):
-        rows = db.command("text", "companies", search=q, filter=fil, project={"_id": 0}, limit=MAX_RESULTS)
-        c = { 'rows' : [dict(r['obj'].items() + {'_score' : r['score']}.items()) for r in rows['results']] }
+        rows = db.command("text", "companies", search=q, filter=fil, project=proj)
+        c['totalRows'] = rows['stats']['nfound']
+        rows['results'] = rows['results'][start_offset:start_offset+MAX_PER_PAGE]
+        c['rows'] = [dict(r['obj'].items() + {'_score' : r['score']}.items()) for r in rows['results']]
     else:
-        rows = db.companies.find(fil, limit = MAX_RESULTS).sort('AnnualSalesUSD', -1)
-        c = { 'rows' : rows }
+        rows = db.companies.find(fil, proj).sort('AnnualSalesUSD', -1)
+        c['totalRows'] = rows.count()
+        rows = rows[start_offset:start_offset+MAX_PER_PAGE]
+        c['rows'] = [r for r in rows]
 
+    # pagination
+    num_pages = int(ceil(float(c['totalRows']) / MAX_PER_PAGE))
+    c['pages'] = [ { 'num': n, 'url' : reverse('search') + '?q=' + quote(q) + (''.join(['&opts=' + opt for opt in opts]) ) +'&page=%s' % n }
+        for n in range(1, num_pages + 1) ]
+    c['page_num'] = page_num
+    c['pages_prev'] = [pg for pg in c['pages'] if pg['num'] == page_num - 1] 
+    c['pages_next'] = [pg for pg in c['pages'] if pg['num'] == page_num + 1] 
 
-#    c['rows_json'] = json.dumps(c['rows'])
-    c['next_url'] = reverse('search') + '?'
+    c['rows_json'] = json.dumps(c['rows'])
     c['q'] = q
     c['opts'] = opts
-
     return render(request, 'web/search.html', c)
 
 def company(request, duns):

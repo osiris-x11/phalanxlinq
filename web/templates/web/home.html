@@ -6,6 +6,16 @@
 
 
 <script type="text/javascript">
+    $.ajax({ url: REST_BASE + '?with=details' })
+        .done(function(cos){
+            cos = { cos : cos };
+            console.log(cos);
+            var vm = ko.mapping.fromJS(cos);
+            ko.applyBindings(vm);
+
+
+
+        })
     function ARViewModel()
     {
         var self = this;
@@ -26,16 +36,38 @@
 
 
     $(function(){
-	    var vm = new ARViewModel();
-        ko.applyBindings(vm);
+//	    var vm = new ARViewModel();
     });
 </script>
 
-<input type="text" data-bind="value: duns, dnb-type-ahead: 1" style="width:300px" />
-<br />
-D-U-N-S Number: <span data-bind="text: duns"></span>
 
-<span data-bind="text: duns"></span>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>DUNS</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th>Size</th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: cos">
+    <tr>
+        <td><a data-bind="text: DUNS, attr : { href : 'company/' + DUNS() }"></a></td>
+        <td>
+            <!-- ko text: Name --><!-- /ko --><br />
+            <!-- ko text: Location.City --><!-- /ko -->,
+            <!-- ko text: Location.State --><!-- /ko -->
+        </td>
+        <td>
+            <input type="number" />
+        </td>
+    </tr>
+    </tbody>
+</table>
 
+    <!-- ko if: 'poop' in $data -->
+    <div data-bind="text: DUNS"></div>
+    <!-- /ko -->
+</div>
 
 {% endblock %}

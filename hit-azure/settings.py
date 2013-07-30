@@ -162,6 +162,8 @@ LOGGING = {
 
 ACCOUNT_KEY = 'ENTER_YOUR_AZURE_ACCOUNT_KEY_HERE'
 
+BING_MAPS_API_KEY = 'ENTER_YOUR_BING_MAPS_API_KEY_HERE'
+
 try:
     from local_settings import *
 except:
