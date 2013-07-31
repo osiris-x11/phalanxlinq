@@ -6,6 +6,35 @@
 
 
 <script type="text/javascript">
+    var BASELINE_EXP_PROFILE = {
+        labels : ["Salary","Supplies","Benefits","CapEx","Utilities","Insurance","Rent", "Misc"],
+        pcts : [18,22,20,10,10,10,5,5]
+    };
+
+    function getExpenseProfile(co)
+    {
+        var totalExpenses = 0;
+        $(co.expenses).each(function(){ totalExpenses += Number(this.amount) });
+        var pcts = [];
+        for (var i=0; i<BASELINE_EXP_PROFILE.labels.length; i++)
+        {
+            var exp = null;
+            for (var j=0; j<co.expenses.length; j++)
+                if (co.expenses[j].name==BASELINE_EXP_PROFILE.labels[i])
+                {
+                    exp = co.expenses[j];
+                    break;
+                }
+            pcts[i] = 0;
+            if (exp)
+                pcts[i] = exp.amount / totalExpenses * 100;
+        }
+        return {
+            totalExpenses : totalExpenses,
+            pcts : pcts
+        }
+    }
+
     $.ajax({ url: REST_BASE + '?with=details' })
         .done(function(cos){
             cos = { cos : cos };
@@ -13,27 +42,81 @@
             initMap(cos.cos);
             var vm = ko.mapping.fromJS(cos);
             ko.applyBindings(vm);
-        })
-    function ARViewModel()
+
+            var totalExpAmounts = $(BASELINE_EXP_PROFILE.labels).map(function(){ return 0});
+
+            $(cos.cos).each(function(){
+                this.expProfile = getExpenseProfile(this);
+                for (var i=0; i<this.expProfile.pcts.length; i++)
+                    totalExpAmounts[i] += this.expProfile.pcts[i];
+                generateExpenseProfileChart('canvas_' + this.DUNS, this.expProfile);
+            });
+
+            for (var i=0; i<totalExpAmounts.length; i++)
+                totalExpAmounts[i] = totalExpAmounts[i] / cos.cos.length;
+
+            generateExpenseProfileChart('exp', {pcts: totalExpAmounts});
+
+        });
+
+    function generateExpenseProfileChart(id, expProfile)
     {
-        var self = this;
-
-        self.accounts = ko.observableArray([
-            ])
-
-        self.addAccount = function() {
-            self.accounts.push({});
-        };
-     
-        self.removeAccount = function() {
-            self.accounts.remove(this);
-        };
+        var data = {
+            labels : BASELINE_EXP_PROFILE.labels,
+            datasets : [
+                {
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    pointColor : "rgba(220,220,220,1)",
+                    pointStrokeColor : "#fff",
+                    data : BASELINE_EXP_PROFILE.pcts
+                },
+                {
+                    fillColor : "rgba(151,187,205,0.5)",
+                    strokeColor : "rgba(151,187,205,1)",
+                    pointColor : "rgba(151,187,205,1)",
+                    pointStrokeColor : "#fff",
+                    data : expProfile.pcts
+                }
+            ]
+        }
+        var options = {};
+        var ctx = document.getElementById(id).getContext('2d');
+        new Chart(ctx).Radar(data,options);
     }
 
-
     $(function(){
-//	    var vm = new ARViewModel();
-    });
+        var data = [
+    {
+        value : 30,
+        color: "#D97041"
+    },
+    {
+        value : 90,
+        color: "#C7604C"
+    },
+    {
+        value : 82,
+        color: "#7D4F6D"
+    },
+    {
+        value : 24,
+        color: "#21323D"
+    },
+    {
+        value : 58,
+        color: "#9D9B7F"
+    },
+    {
+        value : 8,
+        color: "#584A5E"
+    }
+];
+var options = {};
+var ctx = document.getElementById('demo').getContext('2d');
+new Chart(ctx).PolarArea(data,options);
+    })
+
 </script>
 
 <h3>Dashboard</h3>
@@ -42,15 +125,21 @@
     <div class="col-lg-6">
 {% include 'web/includes/map_widget.html' %}
     </div>
+    <div class="col-lg-6">
+        <h3>Featured Charts</h3>
+        <canvas id="exp" width="272" height="260"></canvas>
+        <canvas id="demo" width="272" height="260"></canvas>
+    </div>
 </div>
+
+<h3>Companies in My Portfolio</h3>
 
 <table class="table table-striped">
     <thead>
         <tr>
             <th>DUNS</th>
             <th>Company</th>
-            <th>Location</th>
-            <th>Size</th>
+            <th>Expense Breakdown vs. Nominal</th>
         </tr>
     </thead>
     <tbody data-bind="foreach: cos">
@@ -60,6 +149,16 @@
             <!-- ko text: Name --><!-- /ko --><br />
             <!-- ko text: Location.City --><!-- /ko -->,
             <!-- ko text: Location.State --><!-- /ko -->
+            <!-- ko text: Location.PostalCode --><!-- /ko --><br />
+            <!-- ko text: Location.Country --><!-- /ko -->
+            <br />
+            <!-- ko foreach: Flags -->
+                <a class="btn btn-small btn-info" data-bind="text: $data, attr:{href:'{%url search%}?opts='+$data}"></a>
+            <!-- /ko -->
+
+        </td>
+        <td>
+            <canvas data-bind="attr : {id:'canvas_' + DUNS()}" width="500" height="200"></canvas>
         </td>
     </tr>
     </tbody>

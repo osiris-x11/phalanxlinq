@@ -100,6 +100,7 @@ $(function(){
 
         self.duns = ko.observable('123');
 		 self.save = function() {
+		 	self.active(true);
 		        $.ajax({ url: REST_BASE + '{{duns}}',
 		            data: ko.toJSON(self),
 		            type: "POST",

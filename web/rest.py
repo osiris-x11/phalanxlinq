@@ -39,7 +39,7 @@ def user_company(request, duns):
     proj = { '_id' : 0 }
 
     if duns == '' and request.method == 'GET':
-        return [append_detail(co) for co in cos.find({ 'user_id': user_id }, proj)]
+        return [append_detail(co) for co in cos.find({ 'user_id': user_id }, proj) if co['active']]
 
     co = cos.find_one(spec, proj)
 

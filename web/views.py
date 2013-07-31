@@ -92,6 +92,7 @@ def search(request):
         c['rows'] = [r for r in rows]
 
     user_duns = [e['DUNS'] for e in prefs['companies']]
+    print [e for  e in prefs['companies']]
     for row in c['rows']:
         row['active'] = row['DUNS'] in user_duns
 

@@ -44,6 +44,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/core.css" />
     <link href="{{STATIC_URL}}lib/select2-3.4.1/select2.css" rel="stylesheet"/>
     <script src="{{STATIC_URL}}lib/select2-3.4.1/select2.min.js"></script>
+    <script src="{{STATIC_URL}}lib/Chart.min.js"></script>
   </head>
   <body>
     <div class="navbar-dnb navbar navbar-invexrse navbar-static-top">
@@ -60,6 +61,7 @@
           <ul class="nav navbar-nav">
             <li {% if '/' == request.path %}class="active"{% endif %}><a href="{% url home %}">Dashboard</a></li>
             <li {% if 'search' in request.path %}class="active"{% endif %}><a href="{% url search %}">Search</a></li>
+            <li {% if 'analytics' in request.path %}class="active"{% endif %}><a href="{% url analytics %}">Analytics</a></li>
             <li {% if 'settings' in request.path %}class="active"{% endif %}><a href="{% url settings %}">Settings</a></li>
           </ul>
           <div class="nav-collapse collapse">
@@ -77,25 +79,27 @@
 
     <div id="footer">
       <div class="container">
-        <p class="muted credit">
+          <hr />
+        <div class="col-sm-6">
+          <p class=" muted credit">
+          Project Home: <a href="https://github.com/osiris-x11/phalanxlinq">https://github.com/osiris-x11/phalanxlinq</a>.
+          &copy; Umar Siddiqui {% now "Y" %}
+        </p>
+        </div>
+        <div class="col-sm-2 muted credit">
+
           <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fphalanxlinq.cloudapp.net&amp;width=450&amp;height=21&amp;colorscheme=light&amp;layout=button_count&amp;action=like&amp;show_faces=true&amp;send=false&amp;appId=397458810270026" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe>
-
-
+        </div>
+        <div class="col-sm-2 muted credit">
           <a href="https://twitter.com/share" class="twitter-share-button" data-via="us_x11">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
+        </div>
+        <div class="col-sm-2 muted credit">
 <script src="//platform.linkedin.com/in.js" type="text/javascript">
  lang: en_US
 </script>
 <script type="IN/Share" data-url="http://phalanxlinq.cloudapp.net/" data-counter="right"></script>
-
-
-
-          <!--
-          Project Home: <a href="https://github.com/osiris-x11/phalanxlinq">https://github.com/osiris-x11/phalanxlinq</a>.
-          &copy; Umar Siddiqui {% now "Y" %} All rights reserved.
-        -->
-        </p>
+        </div>
       </div>
     </div>
   </body>
