@@ -4,10 +4,21 @@
 
 {% block content %}
 
-<h3>SIC Filter</h3>
 
 <form method="POST">{% csrf_token %}
-    <input type="submit" class="btn btn-primary" />
+<div class="row">
+    <div class="col-lg-12">
+<h3>SIC Filter</h3>
+
+    <input type="submit" class="btn btn-primary pull-right" />
+<p>Choose the default filters that will be applied to your searches.</p>
+</div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+<div style="height:400px;overflow:auto;border:1px solid #ccc">
 <table class="table table-striped">
     <thead>
         <tr>
@@ -47,6 +58,11 @@
 {% endfor %}
     </tbody>
 </table>
+</div>
+</div>
+</div>
+
+
 </form>
 
 <!--
