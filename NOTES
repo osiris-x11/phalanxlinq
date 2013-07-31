@@ -1,6 +1,3 @@
-http://kff.org/state-category/providers-service-use/hospital-utilization/
-
-
 Operating cost at a hospital:
 - 40% ~ salary
 - 20% ~ supply
@@ -43,27 +40,5 @@ Strategies for healthcare biz development (using D&B data):
 * advertising expense optimization
 * distribution improvement + other cost saving
 
-
-
-
-sudo mongod --setParameter textSearchEnabled=true > /dev/null &
-
-
-
-db.Firmographics.ensureIndex({ "$**" : "text" }, { "weights" : { "Company" : 10, "DoingBusinessAs1" : 7 }, "name" : "TextIndex" })
-
-db.companies.ensureIndex({ "$**" : "text" }, { "weights" : { "Name" : 10, "DBAs" : 7, "Industry.LineOfBusiness" : 3 }, "name" : "TextIndex" })
-
-db.companies.ensureIndex({'AnnualSalesUSD':1})
-db.companies.ensureIndex({'Flags':1})
-db.companies.ensureIndex({'Industry.SICs.Code':1})
-
-
-
-
-db.command("text", "Firmographics", search="orange", project={"Company": 1, "_id": 0}, limit=10)
-
-db.command("text", "Firmographics", search="orange", project={"_id": 0}, limit=10)
-
-
-db.command("text", "Firmographics", search="orange", limit=10)
+Add'l info:
+http://kff.org/state-category/providers-service-use/hospital-utilization/
