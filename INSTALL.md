@@ -63,7 +63,7 @@ Note: Options 2 & 3 will require setting ACCOUNT_KEY and BING_MAPS_API_KEY in ph
 ### Option 1: Load static snapshot
 
     cd /opt/phalanxlinq
-    wget http://ec2-50-17-147-223.compute-1.amazonaws.com/static/companies.json
+    wget http://phalanxlinq.cloudapp.net/static/companies.json
     mongoimport --db phalanxlinq --collection companies --file companies.json
     ./manage.py loader flags loadsic
 
