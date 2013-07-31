@@ -1,6 +1,8 @@
 # Phalanx Linq Installation
 
-Phalanx Linq is cross platform and runs on Linux, Mac OSX, Solaris, *BSD, and Windows.
+Phalanx Linq is Django application which is cross platform and runs on Linux, Mac OSX, Solaris, *BSD, and Windows.
+
+The steps below describe how to install on a clean Ubuntu Virtual Machine (12.04) from Azure.
 
 ## Install Dependancies
 
@@ -50,13 +52,26 @@ Verify MongoDB is running and create indexes:
     sudo ln -s /opt/phalanxlinq/phalanxlinq/virtual-host-apache /etc/apache2/sites-enabled/000-phalanxlinq
     sudo service apache2 restart
 
+## Initial database
 
-mongoexport --db hit --collection companies --out companies.json
+There are several ways to initialize the database using D&B data. Choose the one works best for your needs.
 
-wget http://ec2-50-17-147-223.compute-1.amazonaws.com/static/companies.json
-mongoimport --db phalanxlinq --collection companies --file companies.json
+Note: Options 2 & 3 will require setting ACCOUNT_KEY and BING_MAPS_API_KEY in phalanxlinq/settings.py
 
-./manage.py loader loadsic
-./manage.py loader flags
+### Option 1: Load static snapshot
 
-sudo nano /opt/phalanxlinq/phalanxlinq/local_settings.py
+    cd /opt/phalanxlinq
+    wget http://ec2-50-17-147-223.compute-1.amazonaws.com/static/companies.json
+    mongoimport --db phalanxlinq --collection companies --file companies.json
+    ./manage.py loader flags loadsic
+
+### Option 2: Populate from Azure
+
+    cd /opt/phalanxlinq
+    ./manage.py loader populate consolidate geocode-bing flags loadsic
+
+### Option 3: Populate from Azure with custom geocoder
+
+    cd /opt/phalanxlinq
+    ./manage.py loader populate consolidate geocode-google flags loadsic
+
