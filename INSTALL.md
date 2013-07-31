@@ -6,6 +6,8 @@ The steps below describe how to install on a clean Ubuntu Virtual Machine (12.04
 
 ## Install Dependancies
 
+Dependancies include Apache (webserver), mod_wsgi, python, Django, and MongoDB.
+
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
     sudo apt-get update
@@ -33,8 +35,10 @@ Enable text search by adding the following line to /etc/mongodb.conf
     textSearchEnabled = true
 
 Start MongoDB by either:
+
     sudo service mongodb restart
 or
+
     sudo mongod --setParameter textSearchEnabled=true > /dev/null &
 
 Verify MongoDB is running and create indexes:
@@ -56,12 +60,12 @@ Verify MongoDB is running and create indexes:
 
 There are several ways to initialize the database using D&B data. Choose the one works best for your needs.
 
-Note: Options 2 & 3 will require setting ACCOUNT_KEY and BING_MAPS_API_KEY in phalanxlinq/settings.py
+Note: Options 2 & 3 will require setting ACCOUNT_KEY and BING_MAPS_API_KEY in phalanxlinq/settings.py. ACCOUNT_KEY is the key for D&B Developer Sandbox (https://datamarket.azure.com/dataset/dnb/developersandbox). BING_MAPS_API_KEY is the key used for geocoding using Bing Maps (https://www.bingmapsportal.com/)
 
 ### Option 1: Load static snapshot
 
     cd /opt/phalanxlinq
-    wget http://ec2-50-17-147-223.compute-1.amazonaws.com/static/companies.json
+    wget http://phalanxlinq.cloudapp.net/static/companies.json
     mongoimport --db phalanxlinq --collection companies --file companies.json
     ./manage.py loader flags loadsic
 
