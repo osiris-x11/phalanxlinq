@@ -16,6 +16,18 @@ from urllib import quote
 def layer_user_prefs(prefs, co):
     pass
 
+def trim_trailing_zeros(code):
+    while code[-1] == '0' and len(code)>2:
+        code = code[0:-1]
+    return code
+def convert_case(s):
+    so = ''
+    for c in s:
+        if c == c.upper():
+            so += ' '
+        so += c
+    return so.strip()
+
 
 
 def get_user_prefs(db, user_id = 1):
@@ -28,17 +40,6 @@ def get_user_prefs(db, user_id = 1):
 
 
 def search(request):
-    def trim_trailing_zeros(code):
-        while code[-1] == '0' and len(code)>2:
-            code = code[0:-1]
-        return code
-    def convert_case(s):
-        so = ''
-        for c in s:
-            if c == c.upper():
-                so += ' '
-            so += c
-        return so.strip()
 
     MAX_PER_PAGE = 500
 #    SEARCH_LIMIT = 1000
@@ -120,7 +121,8 @@ def company(request, duns):
 
     c = { 'co_json' : json.dumps(all_info), 'co': all_info }
     c['rows_json'] = json.dumps([all_info])
-
+    c['canonical_url'] = request.build_absolute_uri()
+    c['co_flags'] = [ {'value': f, 'name': convert_case(f)} for f in all_info['Flags']]
     return render(request, 'web/company.html', c)
 
 

@@ -1,9 +1,14 @@
 
+<style type="text/css">
+.num{
+	width:120px;
+	text-align: right;
+}</style>
 <script type="text/javascript">
 $(function(){
     var vm = {{co_json|safe}};
-
-
+   	var sales = vm.AnnualSalesUSD === null ? 0 : vm.AnnualSalesUSD;
+   	var costs = sales * 0.91;
 /*
     $.ajax({ url: REST_BASE + '?with=details' })
         .done(function(cos){
@@ -27,22 +32,22 @@ $(function(){
         self.active = ko.observable(false);
         self.setDefaults = function() {
 	        self.expenses = ko.observableArray([
-	        	new LineItem('Salary'),
-	        	new LineItem('Supplies'),
-	        	new LineItem('Benefits'),
-	        	new LineItem('CapEx'),
-	        	new LineItem('Utilities'),
-	        	new LineItem('Insurance'),
-	        	new LineItem('Rent/Maint.'),
-	        	new LineItem('Misc')
+	        	new LineItem('Salary', Math.round(costs*.18)),
+	        	new LineItem('Supplies', Math.round(costs*.22)),
+	        	new LineItem('Benefits', Math.round(costs*.2)),
+	        	new LineItem('CapEx', Math.round(costs*.1)),
+	        	new LineItem('Utilities', Math.round(costs*.1)),
+	        	new LineItem('Insurance', Math.round(costs*.1)),
+	        	new LineItem('Rent/Maint.', Math.round(costs*.05)),
+	        	new LineItem('Misc', Math.round(costs*.05))
 	        ]);
 
 	        self.incomes = ko.observableArray([
-	        	new LineItem('Medicare'),
-	        	new LineItem('Managed Care'),
-	        	new LineItem('Commercial'),
-	        	new LineItem('Medicaid'),
-	        	new LineItem('Self-pay')
+	        	new LineItem('Medicare', Math.round(sales*.43)),
+	        	new LineItem('Managed Care', Math.round(sales*.33)),
+	        	new LineItem('Commercial', Math.round(sales*.12)),
+	        	new LineItem('Medicaid', Math.round(sales*.09)),
+	        	new LineItem('Self-pay', Math.round(sales*.02))
 	        	])
 
 	        self.stats = ko.observableArray([
@@ -68,6 +73,8 @@ $(function(){
 
         $.ajax({ url: REST_BASE + '{{duns}}'})
         	.done(function(data){
+        		if (!data)
+        			return;
         		self.active(data.active);
         		$(data.expenses).each(function(){
         			self.putItem('expenses', this.name, this.amount);
@@ -97,7 +104,9 @@ $(function(){
 		            data: ko.toJSON(self),
 		            type: "POST",
 		            contentType: "application/json",
-		            success: function(result) { alert(result) }
+		            success: function(result) {
+		            	$('#xrow').slideUp();
+		            }
 		        });
 		    }; 
 
@@ -115,54 +124,61 @@ $(function(){
 
 
 
-<!-- Single button -->
-<div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-    Action <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu">
-  	<li><a href="Javascript:void(0)" onclick="$('#xrow').slideToggle()">Show</a></li>
-    <li><a href="#">Remove from My List</a></li>
-    <li><a href="#">Another action</a></li>
-    <li><a href="#">Something else here</a></li>
-    <li class="divider"></li>
-    <li><a href="#">Separated link</a></li>
-  </ul>
-</div>
 
 
+<div class="navbar navbar-static-top" style="margin-bottom:0">
+	<ul class="nav navbar-nav">
+		<li><a href="Javascript:void(0)" onclick="$('#xrow').slideToggle();$(this).find('.txt').text($(this).find('.txt').text()=='Hide'?'Show':'Hide')" class="btxn btn-inxfo"><span class="txt">Show</span> Profile <span class="caret"></span></a>
+		</li>
+		<li class="dropdown">
+		    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+		      Send to CRM <span class="caret"></span>
+		    </a>
+	    <ul class="dropdown-menu">
+	    	<li><a class="btn-share" rel="popover" data-original-title="Please Upgrade - You are using the open-source version of Phalanx Linq. This feature is only available in the commercial edition.">Microsoft Dynamics</a></li>
+	    	<li><a class="btn-share" rel="popover" data-original-title="Please Upgrade - You are using the open-source version of Phalanx Linq. This feature is only available in the commercial edition.">Salesforce</a></li>
+	    	<li><a class="btn-share" rel="popover" data-original-title="Please Upgrade - You are using the open-source version of Phalanx Linq. This feature is only available in the commercial edition.">Siebel</a></li>
+	    </ul>
+  </li>
+		<li>
 <!-- ko if: active -->
 	<i class="icon-star" style="color:#66f"></i>
-
 <!-- /ko -->
+		</li>
+	</ul>
+</div>
+
+<script>
+$(function () { $("a.btn-share").tooltip(); });
+</script>
 
 <div class="row" id="xrow" style="display:none;z-index:3">
+	<div class="col-lg-3">
+		<div class="panel">
+		  <div class="panel-heading">
+		  	Expense Profile
+		  	<button class="btn btn-small pull-right" data-bind="click: addExpense"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
+		  </div>
+		  <table>
+			<tbody data-bind="foreach: expenses">
+				<tr>
+					<td>
+						<input class="form-control" type="text" data-bind="value: name" />
+					</td>
+					<td>
+						<input class="form-control num" type="number" data-bind="value: amount" />
+					</td>
+					<td>
+						<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeExpense"></span>
+					</td>
+				</tr>
+			</tbody>
+			</table>
+		  </div>
+		</div>
 
-<button data-bind="click: save" class="btn btn-primary">Save</button>
-
-	<div class="col-lg-4 panel">
-	  <div class="panel-heading">
-	  	Expense Profile
-	  	<button class="btn btn-small pull-right" data-bind="click: addExpense"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
-	  </div>
-	  <table>
-		<tbody data-bind="foreach: expenses">
-			<tr>
-				<td>
-					<input class="form-control" type="text" data-bind="value: name" />
-				</td>
-				<td>
-					<input class="form-control" type="number" data-bind="value: amount" />
-				</td>
-				<td>
-					<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeExpense"></span>
-				</td>
-			</tr>
-		</tbody>
-		</table>
-	  </div>
-
-	<div class="col-lg-4 panel">
+	<div class="col-lg-3">
+		<div class="panel">
 	  <div class="panel-heading">
 	  	Income Profile
 		<button class="btn btn-small pull-right" data-bind="click: addIncome"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
@@ -174,7 +190,7 @@ $(function(){
 						<input class="form-control" type="text" data-bind="value: name" />
 					</td>
 					<td>
-						<input class="form-control" type="number" data-bind="value: amount" />
+						<input class="form-control num" type="number" data-bind="value: amount" />
 					</td>
 					<td>
 						<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeIncome"></span>
@@ -183,9 +199,11 @@ $(function(){
 			</tbody>
 		</table>
 
+		</div>
 	</div>
 
-	<div class="col-lg-4 panel">
+	<div class="col-lg-3">
+		<div class="panel">
 	  <div class="panel-heading">
 	  	Statistics
 	  	<button class="btn btn-small pull-right" data-bind="click: addStat"><i class="glyphicon glyphicon-plus-sign"></i> Add</button>
@@ -197,7 +215,7 @@ $(function(){
 						<input class="form-control" type="text" data-bind="value: name" />
 					</td>
 					<td>
-						<input class="form-control" type="number" data-bind="value: amount" />
+						<input class="form-control num" type="number" data-bind="value: amount" />
 					</td>
 					<td>
 						<span class="glyphicon glyphicon-remove-circle" data-bind="click: $parent.removeStat"></span>
@@ -205,7 +223,12 @@ $(function(){
 				</tr>
 			</tbody>
 		</table>
+	</div>
 
 	</div>
 
+	<div class="col-lg-3">
+			<button data-bind="click: save" class="btn btn-primary">Save</button>
+
+	</div>
 </div>

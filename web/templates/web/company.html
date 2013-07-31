@@ -5,20 +5,71 @@
 
 {% block content %}
 
+{% include 'web/includes/share.html' %}
+<br/>
 
-
-<div class="navbar">
-  <a class="navbar-brand" href="#">{{co.Name}}</a>
-  <p class="navbar-text">
+<h3>
+	{{co.Name}}
     {% include 'web/includes/co_indicators.html' with co=co %}
+</h3>
 
-  	{{ co.CEO.Title }} : {{ co.CEO.Name }}<br />
-  	Employees: {{ co.EmployeesHere }} of {{ co.EmployeesTotal }}<br />
-  	Sales: ${{ co.AnnualSalesUSD|intcomma }}<br />
-  	Founded: {% if co.StartYear %}{{ co.StartYear }}{%else%}{{co.ControlYear }}{% endif %}
-  </p>
+<div class="well">
+	<div class="col-lg-6">
+	    {% if co.DBAs %}
+	        <strong>DBA:</strong> {{ co.DBAs|join:", "}}<br />
+	    {% endif %}
+	  	<strong>{{ co.CEO.Title }}:</strong> {{ co.CEO.Name }}<br />
+	  	<strong>Address:</strong>
+	  	<div style="margin-left:30px">
+		    {{co.Location.Street1}}<br />
+		    {{co.Location.City}}, {{co.Location.State}} {{co.Location.PostalCode}}<br />
+		    {{co.Location.Country}}
+		</div>
+
+	  	<strong>Employees:</strong>
+		{% if co.EmployeesHere %}
+		    {{ co.EmployeesHere }} employees
+		{% endif %}
+		{% if co.EmployeesTotal %}
+		    {% if co.EmployeesTotal != co.EmployeesHere %}
+		        ({{ co.EmployeesTotal }} total)
+		    {% endif %}
+		{% endif %}
+		<br />
+	  	<strong>Sales:</strong> ${{ co.AnnualSalesUSD|intcomma }}<br />
+	  	<strong>Founded:</strong> {% if co.StartYear %}{{ co.StartYear }}{%else%}{{co.ControlYear }}{% endif %}<br />
+	  	{% if co.FederalTaxID %}
+	  	<strong>Federal Tax ID:</strong> {{co.FederalTaxID}}
+	  	{% endif %}
+	  	{% if co.NationalTaxID %}
+	  	<strong>National Tax ID:</strong> {{co.NationalTaxID}}
+	  	{% endif %}
+	</div>
+	<div class="col-lg-6">
+	    {% if co.Location.Phone %}
+	    <a class="pull-right" href="tel:{{co.Location.Phone}}"><span class="glyphicon glyphicon-phone"></span> {{co.Location.Phone}}</a>
+	    {% endif %}
+		<strong>Line-of-Business:</strong> {{co.Industry.LineOfBusiness}}<br />
+		<strong>SIC:</strong>
+		<div style="margin-left:30px">
+			{% for ind in co.Industry.SICs %}
+			{{ind.Code}} : {{ind.Description}}<br />
+			{% endfor %}
+		</div>
+	</div>
+  <div class="clearfix"></div>
 </div>
 
+<h4>D&amp;B Indicators</h4>
+<div class="row">
+	<div class="col-lg-12">
+		{% for flag in co_flags %}
+		<a class="btn btn-small btn-info" href="{% url search %}?opts={{flag.value}}">{{flag.name}}</a>
+		{% endfor %}
+	</div>
+</div>
+
+<br />
 {% include 'web/includes/co_personalized_profile.html' with duns=co.DUNS %}
 
 <script type="text/javascript">
@@ -26,64 +77,74 @@ var rows = {{rows_json|safe}};
 </script>
 {% include 'web/includes/map_widget.html' with companies='rows' %}
 
-{{co.Addl}}
-
-
-
-Out of business: {{co.Addl.OutOfBusinessInd}}
-Single location: {{co.Addl.SingleLocation}} 
-Small business: {{co.Addl.SmallBusinessIndicator}}
-
-Industry: {{co.Industry.LineOfBusiness }}
-
-BankruptcyDate : {{co.Addl.BankruptcyDate}} {{co.Addl.Bankruptcyindicator}}
+<h4>Family Hierarchy</h4>
 
 <div class="row">
 	<div class="col-lg-4">
+		<h5>Company</h5>
 		{% include 'web/includes/co_info_box.html' with co=co DBAs=co.DBAs %}
 	</div>
 	{% if co.Linkage.Parent %}
 	<div class="col-lg-4">
-		parent:
+		<h5>Parent</h5>
 		{% include 'web/includes/co_info_box.html' with co=co.Linkage.Parent %}
 	</div>
 	{% endif %}
+
 	{% if co.Linkage.HQ %}
 	<div class="col-lg-4">
-		HQ
+		<h5>Headquarters</h5>
+		{% if co.Linkage.HQ.DUNS == co.DUNS %}
+		(same as this location)
+		{% else %}
 		{% include 'web/includes/co_info_box.html' with co=co.Linkage.HQ %}
+		{% endif %}
 	</div>
 	{% endif %}
 
-	{% if co.Linkage.DomesticUltimate.DUNS and co.Linkage.DomesticUltimate.DUNS != co.Linkage.Parent.DUNS and co.Linkage.DomesticUltimate.DUNS != co.DUNS %}
+	{% if co.Linkage.DomesticUltimate %}
 	<div class="col-lg-4">
-		Domestic
+		<h5>Domestic Ultimate Parent</h5>
+		{% if co.Linkage.HQ.DUNS == co.DUNS %}
+		(same as this location)
+		{% else %}
 		{% include 'web/includes/co_info_box.html' with co=co.Linkage.DomesticUltimate %}
+		{% endif %}
 	</div>
 	{% endif %}
 
-	{% if co.Linkage.GlobalUltimate.DUNS != co.Linkage.DomesticUltimate.DUNS %}
+	{% if co.Linkage.GlobalUltimate %}
 	<div class="col-lg-4">
-		Global Ultimate
+		<h5>Global Ultimate Parent</h5>
+		{% if co.Linkage.HQ.DUNS == co.DUNS %}
+		(same as this location)
+		{% else %}
 		{% include 'web/includes/co_info_box.html' with co=co.Linkage.GlobalUltimate %}
+		{% endif %}
 	</div>
 	{% endif %}
 </div>
 
-<!--
-<h5>Debug Info</h5>
+<h4>Additional D&amp;B Insights</h4>
 
-<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
--->
+<table class="table table-condensed table-bordered">
+	<thead>
+		<tr>
+			<th>Attribute</th>
+			<th>Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for key, val in co.Addl.items %}
+		{% if val %}
+		<tr>
+			<td>{{key}}</td>
+			<td>{{val}}</td>
+		</tr>
+		{% endif %}
+		{% endfor %}
+	</tbody>
+</table>
 
-
-
-<!--
-<span class="glyphicon glyphicon-ok"></span>
-<hr/>
-
-<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
-
--->
-
+Some data &copy;2013 Dun &amp; Bradstreet
 {% endblock %}
