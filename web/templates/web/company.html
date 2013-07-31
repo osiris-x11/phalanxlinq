@@ -36,7 +36,9 @@
 		    {% endif %}
 		{% endif %}
 		<br />
+	  	{% if co.AnnualSalesUSD %}
 	  	<strong>Sales:</strong> ${{ co.AnnualSalesUSD|intcomma }}<br />
+	  	{% endif %}
 	  	<strong>Founded:</strong> {% if co.StartYear %}{{ co.StartYear }}{%else%}{{co.ControlYear }}{% endif %}<br />
 	  	{% if co.FederalTaxID %}
 	  	<strong>Federal Tax ID:</strong> {{co.FederalTaxID}}

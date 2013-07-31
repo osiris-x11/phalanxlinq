@@ -4,18 +4,6 @@
 
 {% block content %}
 
-
-<script type="text/javascript">
-$(function(){
-    var vm = {
-        items : {{rows_json|safe}},
-        sics : {{sics_json|safe}}
-    };
-    console.log(JSON.stringify(vm.sics));
-    ko.applyBindings(vm);
-});
-</script>
-
 <h3>SIC Filter</h3>
 
 <form method="POST">{% csrf_token %}
@@ -23,7 +11,7 @@ $(function(){
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>DUNS</th>
+            <th></th>
             <th>SIC</th>
             <th>Name</th>
         </tr>
